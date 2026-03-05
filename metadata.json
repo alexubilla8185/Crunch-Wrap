@@ -1,0 +1,7 @@
+{
+  "name": "Crispy Bacon",
+  "description": "Transform scattered meeting notes into instant, actionable intelligence. The privacy-first AI knowledge base built for teams that refuse to lose.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

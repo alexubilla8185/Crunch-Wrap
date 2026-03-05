@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: oklch(var(--background));
+  --color-foreground: oklch(var(--foreground));
+  --color-primary: oklch(var(--primary));
+  --color-primary-foreground: oklch(var(--primary-foreground));
+  --color-border: oklch(var(--border));
+  --font-serif: var(--font-newsreader);
+  --font-mono: var(--font-geist-mono);
+}
+
+@layer base {
+  :root {
+    /* Sandstone Light Theme - Warm, Earthy, Paper */
+    --background: 98% 0.01 75;  /* Warm cream */
+    --foreground: 25% 0.02 75;  /* Deep warm charcoal text */
+    --primary: 30% 0.03 75;     /* Dark warm slate accent */
+    --primary-foreground: 98% 0.01 75; 
+    --border: 90% 0.02 75;      /* Subtle warm border */
+  }
+
+  .dark {
+    /* Charcoal Dark Theme - Deep, Cool Slate */
+    --background: 18% 0.01 220; /* Deep slate gray */
+    --foreground: 92% 0.01 220; /* Crisp off-white text */
+    --primary: 85% 0.02 220;    /* Light slate accent */
+    --primary-foreground: 18% 0.01 220;
+    --border: 28% 0.01 220;     /* Subtle slate border */
+  }
+
+  body {
+    background-color: oklch(var(--background));
+    color: oklch(var(--foreground));
+    font-family: var(--font-serif), serif;
+  }
+}
