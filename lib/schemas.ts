@@ -49,6 +49,6 @@ export const AudioSchema = z.object({
   file: z.instanceof(File).or(z.instanceof(Blob)),
   size: z.number().max(50 * 1024 * 1024, 'File size must be less than 50MB'),
   type: z.enum(['audio/mpeg', 'audio/webm'], {
-    errorMap: () => ({ message: 'Only audio/mpeg or audio/webm are allowed' }),
+    message: 'Only audio/mpeg or audio/webm are allowed',
   }),
 });

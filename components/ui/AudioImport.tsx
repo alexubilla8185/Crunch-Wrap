@@ -82,7 +82,8 @@ export default function AudioImport() {
       setIsRecording(true);
       setRecordingDuration(0);
       timerRef.current = setInterval(() => {
-        setRecordingDuration((prev) => prev + 1);
+        const currentDuration = useAudioStore.getState().recordingDuration;
+        setRecordingDuration(currentDuration + 1);
       }, 1000);
     } catch (error) {
       console.error('Error accessing microphone:', error);
