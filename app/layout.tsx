@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import {Newsreader, Geist_Mono} from 'next/font/google';
+import QueryProvider from '@/components/providers/QueryProvider';
 import ThemeProvider from '@/components/ThemeProvider';
 import './globals.css'; // Global styles
 
@@ -39,7 +40,9 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     <html lang="en" className={`${newsreader.variable} ${geistMono.variable}`}>
       <body className="antialiased selection:bg-primary/30" suppressHydrationWarning>
         <ThemeProvider>
-          {children}
+          <QueryProvider>
+            {children}
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
