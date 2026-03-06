@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://crispy-bacon-v2.netlify.app'),
   title: "Crispy Bacon | Privacy-First AI Intelligence",
   description: "Transform scattered meeting notes into instant, actionable intelligence. The privacy-first AI knowledge base built for teams that refuse to lose.",
   openGraph: {

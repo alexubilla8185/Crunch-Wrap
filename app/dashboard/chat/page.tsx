@@ -3,7 +3,12 @@
 import { useChat } from '@ai-sdk/react';
 import { useEffect, useRef, useState } from 'react';
 import { Send } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import dynamic from 'next/dynamic';
+
+const MarkdownRenderer = dynamic(() => import('@/components/ui/MarkdownRenderer'), {
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-foreground/5 h-20 rounded-xl" />,
+});
 
 export default function ChatPage() {
   const { messages, sendMessage, status } = useChat();
@@ -62,8 +67,8 @@ export default function ChatPage() {
                     {m.parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('')}
                   </div>
                 ) : (
-                  <div className="w-full max-w-3xl font-serif text-lg leading-relaxed prose prose-neutral dark:prose-invert prose-p:leading-relaxed prose-pre:bg-foreground/5 prose-pre:text-foreground">
-                    <ReactMarkdown>{m.parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('')}</ReactMarkdown>
+                  <div className="w-full max-w-3xl font-serif text-lg leading-relaxed">
+                    <MarkdownRenderer>{m.parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('')}</MarkdownRenderer>
                   </div>
                 )}
               </div>
