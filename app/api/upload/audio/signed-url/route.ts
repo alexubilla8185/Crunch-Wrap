@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       .createSignedUploadUrl(filePath);
 
     if (error) {
-      console.error('Supabase signed URL error:', error);
+      console.error("SUPABASE STORAGE ERROR:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
