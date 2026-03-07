@@ -1,14 +1,15 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 
-export default async function SharedInsightPage({ params }: { params: { id: string } }) {
+export default async function SharedInsightPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createClient();
   
   // 1. Fetch link and validate expiration
   const { data: link, error: linkError } = await supabase
     .from('shared_links')
     .select('insight_id, expires_at')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (linkError || !link) notFound();
