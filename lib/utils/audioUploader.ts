@@ -18,7 +18,15 @@ export async function uploadAudio(file: File | Blob): Promise<string> {
       method: 'POST',
       body: JSON.stringify({ fileName: 'recording.webm', contentType: file.type }),
     });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Failed to get signed URL:', errorData);
+      throw new Error('Failed to get signed URL');
+    }
+    
     const { signedUrl } = await response.json();
+    console.log('Got signed URL:', signedUrl);
 
     const uploadResponse = await fetch(signedUrl, {
       method: 'PUT',
