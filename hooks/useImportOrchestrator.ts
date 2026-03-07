@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { getAllLocalInsights, getAllUploadingOrAnalyzingInsights, saveInsight } from '@/lib/storage/localDbService';
 import { useUIStore } from '@/lib/store';
 
 export function useImportOrchestrator() {
   const isSyncing = useRef(false);
   const { showToast } = useUIStore();
+  const router = useRouter();
 
   useEffect(() => {
     const recoverStuckInsights = async () => {
@@ -62,6 +64,9 @@ export function useImportOrchestrator() {
             // 1. Mark as uploading locally to prevent duplicate uploads
             const uploadingInsight = { ...insight, processing_status: 'uploading' as const };
             await saveInsight(uploadingInsight);
+
+            // Navigate to dashboard immediately upon starting processing
+            router.push('/dashboard/files');
 
             // 2. Prepare content for API
             let base64Data = '';
@@ -176,5 +181,5 @@ export function useImportOrchestrator() {
     return () => {
       clearInterval(intervalId);
     };
-  }, [showToast]);
+  }, [showToast, router]);
 }

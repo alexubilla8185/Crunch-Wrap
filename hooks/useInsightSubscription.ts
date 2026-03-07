@@ -13,6 +13,7 @@ export function useInsightSubscription() {
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'insights' },
         (payload) => {
+          console.log("Realtime payload received:", payload);
           if (payload.new.processing_status === 'completed') {
             queryClient.invalidateQueries({ queryKey: ['insights'] });
           }
