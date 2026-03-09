@@ -13,6 +13,23 @@ export async function POST(req: Request) {
     }
 
     const supabase = await createClient();
+    
+    // 1. Fetch the File Data
+    const { data: fileBlob, error: downloadError } = await supabase.storage
+      .from('meetings')
+      .download(audioUrl);
+
+    if (downloadError) {
+      throw new Error(`Failed to download audio file: ${downloadError.message}`);
+    }
+
+    // 2. Convert to Base64
+    const arrayBuffer = await fileBlob.arrayBuffer();
+    const base64Audio = Buffer.from(arrayBuffer).toString('base64');
+
+    // 3. Determine mimeType
+    const yourMimeType = audioUrl.endsWith('.mp3') ? 'audio/mp3' : (mimeType || 'audio/webm');
+
     const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY! });
     
     const model = isDeepAnalysisEnabled ? "gemini-3.1-pro-preview" : "gemini-3-flash-preview";
@@ -22,7 +39,7 @@ export async function POST(req: Request) {
       contents: {
         parts: [
           { text: "Analyze this audio and provide a structured summary, highlights, action items, topics, and sentiment." },
-          { inlineData: { data: audioUrl, mimeType: mimeType || 'audio/webm' } }
+          { inlineData: { data: base64Audio, mimeType: yourMimeType } }
         ]
       },
       config: {
