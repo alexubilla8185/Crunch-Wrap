@@ -24,7 +24,9 @@ export async function uploadAudio(file: File | Blob): Promise<string> {
     const uploadResponse = await fetch(signedUrl, {
       method: 'PUT',
       body: validated.file,
-      headers: { 'Content-Type': file.type },
+      headers: { 
+        'Content-Type': file.type || 'audio/mpeg' 
+      },
     });
 
     if (uploadResponse.ok) {
