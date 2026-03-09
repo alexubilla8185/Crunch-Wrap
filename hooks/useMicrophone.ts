@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { saveInsight } from '@/lib/storage/localDbService';
 import type { Insight } from '@/lib/schemas';
 
@@ -38,6 +39,7 @@ function encodeWAV(samples: Float32Array, sampleRate: number): Blob {
 export function useMicrophone() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const router = useRouter();
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -163,6 +165,7 @@ export function useMicrophone() {
     try {
       await saveInsight(newInsight);
       console.log('Successfully saved voice note locally:', id);
+      router.push(`/dashboard/files/${id}`);
     } catch (error) {
       console.error('Failed to save voice note:', error);
     }

@@ -47,18 +47,13 @@ export function useFileDrop() {
       try {
         const parsedContent = await parseFile(file);
         
-        if (typeof parsedContent === 'object' && parsedContent.isAudio) {
-          showToast(`Uploading audio: ${file.name}`, 'info');
-          await uploadAudio(file);
-          continue;
-        }
-
         const now = new Date().toISOString();
+        const id = crypto.randomUUID();
         
         const newInsight: Insight = {
-          id: crypto.randomUUID(),
+          id,
           title: file.name,
-          raw_content: parsedContent as string,
+          raw_content: parsedContent as string | Blob,
           processing_status: 'local',
           created_at: now,
           updated_at: now,
@@ -67,17 +62,13 @@ export function useFileDrop() {
         await saveInsight(newInsight);
         console.log('Successfully saved insight locally:', newInsight.id);
         
-        if (fileArray.length === 1) {
-          router.push(`/dashboard/files/${newInsight.id}`);
-        }
+        // Optimistic routing: navigate immediately
+        router.push(`/dashboard/files/${newInsight.id}`);
+        
       } catch (error) {
         console.error('Error processing dropped file:', error);
         showToast(`Failed to import ${file.name}`, 'error');
       }
-    }
-    
-    if (fileArray.length > 1) {
-      router.push('/dashboard/files');
     }
     
     showToast('Importing documents...', 'info');
