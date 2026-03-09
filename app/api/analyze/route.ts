@@ -28,7 +28,12 @@ export async function POST(req: Request) {
     const base64Audio = Buffer.from(arrayBuffer).toString('base64');
 
     // 3. Determine mimeType
-    const yourMimeType = audioUrl.endsWith('.mp3') ? 'audio/mp3' : (mimeType || 'audio/webm');
+    let yourMimeType = mimeType;
+    if (!yourMimeType) {
+      if (audioUrl.endsWith('.mp3')) yourMimeType = 'audio/mp3';
+      else if (audioUrl.endsWith('.md')) yourMimeType = 'text/markdown';
+      else yourMimeType = 'audio/webm';
+    }
 
     const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY! });
     
@@ -38,7 +43,7 @@ export async function POST(req: Request) {
       model,
       contents: {
         parts: [
-          { text: "Analyze this audio and provide a structured summary, highlights, action items, topics, and sentiment." },
+          { text: "Analyze this content and provide a structured summary, highlights, action items, topics, and sentiment." },
           { inlineData: { data: base64Audio, mimeType: yourMimeType } }
         ]
       },

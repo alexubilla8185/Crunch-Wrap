@@ -18,6 +18,7 @@ export function useImportOrchestrator() {
         isSyncing.current = true;
         
         const pendingInsights = await getAllLocalInsights();
+        console.log('Pending insights:', pendingInsights);
         
         if (!pendingInsights || pendingInsights.length === 0) {
           isSyncing.current = false;
@@ -25,6 +26,7 @@ export function useImportOrchestrator() {
         }
 
         for (const insight of pendingInsights) {
+          console.log('Processing insight:', insight.id, 'Status:', insight.processing_status);
           // Skip if already failed to prevent infinite retries
           if (insight.processing_status === 'failed') continue;
 
@@ -36,12 +38,13 @@ export function useImportOrchestrator() {
               return; // Return instead of failing the insight
             }
 
-            const fileName = `${Date.now()}-${insight.id}.webm`;
+            const isDocument = typeof insight.raw_content === 'string';
+            const fileName = isDocument ? `${Date.now()}-${insight.id}.md` : `${Date.now()}-${insight.id}.webm`;
             const filePath = `${user.id}/${fileName}`;
             
             const { error: uploadError } = await supabase.storage
               .from('meetings')
-              .upload(filePath, insight.raw_content as Blob);
+              .upload(filePath, isDocument ? new Blob([insight.raw_content as string], { type: 'text/markdown' }) : (insight.raw_content as Blob));
 
             if (uploadError) throw uploadError;
 
@@ -69,7 +72,7 @@ export function useImportOrchestrator() {
               body: JSON.stringify({ 
                 insightId: dbInsight.id,
                 audioUrl: filePath,
-                mimeType: 'audio/webm',
+                mimeType: isDocument ? 'text/markdown' : 'audio/webm',
                 isDeepAnalysisEnabled: false
               }),
             });
