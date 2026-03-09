@@ -4,9 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
   const supabase = await createClient();
+  let insightId: string | undefined;
   try {
     const body = await req.json();
-    const { insightId, audioUrl, mimeType, isDeepAnalysisEnabled } = body;
+    const data = body;
+    insightId = data.insightId;
+    const { audioUrl, mimeType, isDeepAnalysisEnabled } = data;
 
     // Validate required fields
     if (!insightId || !audioUrl) {
