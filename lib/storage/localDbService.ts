@@ -54,7 +54,8 @@ export async function getInsight(id: string): Promise<Insight | undefined> {
 export async function getAllLocalInsights(): Promise<Insight[]> {
   const db = await getDB();
   if (!db) return [];
-  return db.getAllFromIndex(STORE_NAME, 'by-processing-status', 'local');
+  // Return all insights so the orchestrator can filter them based on status
+  return db.getAll(STORE_NAME);
 }
 
 export async function getAllUploadingOrAnalyzingInsights(): Promise<Insight[]> {

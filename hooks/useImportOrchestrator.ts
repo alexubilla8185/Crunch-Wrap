@@ -27,10 +27,18 @@ export function useImportOrchestrator() {
 
         for (const insight of pendingInsights) {
           console.log('Processing insight:', insight.id, 'Status:', insight.processing_status);
-          // Skip if already failed to prevent infinite retries
-          if (insight.processing_status === 'failed') continue;
+          
+          // Only process insights that are strictly 'local'
+          if (insight.processing_status !== 'local') continue;
 
           try {
+            // 0. Mark as uploading
+            await saveInsight({
+              ...insight,
+              processing_status: 'uploading',
+              updated_at: new Date().toISOString(),
+            });
+
             // 1. Upload to Supabase Storage
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
@@ -62,6 +70,13 @@ export function useImportOrchestrator() {
               .single();
 
             if (dbError) throw dbError;
+
+            // Mark as analyzing locally
+            await saveInsight({
+              ...insight,
+              processing_status: 'analyzing',
+              updated_at: new Date().toISOString(),
+            });
 
             // 3. Navigate immediately
             router.push(`/dashboard/files/${dbInsight.id}`);
