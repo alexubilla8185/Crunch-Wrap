@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
+  const supabase = await createClient();
   try {
     const body = await req.json();
     const { insightId, audioUrl, mimeType, isDeepAnalysisEnabled } = body;
@@ -11,8 +12,6 @@ export async function POST(req: Request) {
     if (!insightId || !audioUrl) {
       return NextResponse.json({ success: false, error: "Missing required fields in payload." }, { status: 400 });
     }
-
-    const supabase = await createClient();
     
     // 1. Fetch the File Data
     const { data: fileBlob, error: downloadError } = await supabase.storage
