@@ -75,9 +75,10 @@ export function useImportOrchestrator() {
             if (blob.size < 1000) throw new Error("Blob is corrupted or empty before upload");
 
             const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_DATABASE_URL;
-            const fullSignedUrl = `${supabaseUrl}${signedData.signedUrl}`;
+            const finalUrl = new URL(signedData.signedUrl, supabaseUrl).toString();
+            console.log('Final upload URL:', finalUrl);
 
-            const uploadResponse = await fetch(fullSignedUrl, {
+            const uploadResponse = await fetch(finalUrl, {
               method: 'PUT',
               body: blob,
               headers: {
