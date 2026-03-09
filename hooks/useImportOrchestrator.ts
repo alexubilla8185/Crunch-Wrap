@@ -25,6 +25,9 @@ export function useImportOrchestrator() {
         }
 
         for (const insight of pendingInsights) {
+          // Skip if already failed to prevent infinite retries
+          if (insight.processing_status === 'failed') continue;
+
           try {
             // 1. Upload to Supabase Storage
             const { data: { user } } = await supabase.auth.getUser();
@@ -62,15 +65,18 @@ export function useImportOrchestrator() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ 
                 insightId: dbInsight.id,
-                audioUrl: filePath, // The API needs to know where to get the audio
+                audioUrl: filePath,
                 mimeType: 'audio/webm',
                 isDeepAnalysisEnabled: false
               }),
             });
 
-            if (!response.ok) throw new Error('Analysis failed');
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Analysis failed');
+            }
 
-            // 5. Mark as completed in local DB (optional, but good for sync)
+            // 5. Mark as completed in local DB
             await saveInsight({
               ...insight,
               processing_status: 'completed',
@@ -79,12 +85,13 @@ export function useImportOrchestrator() {
 
           } catch (error) {
             console.error(`Failed to import insight ${insight.id}:`, error);
-            // Mark as failed locally to prevent infinite retries
+            // Forcefully mark as failed to prevent any further retries
             await saveInsight({
               ...insight,
               processing_status: 'failed',
               updated_at: new Date().toISOString(),
             });
+            // Break loop for this insight to stop processing
           }
         }
       } catch (error) {

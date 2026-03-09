@@ -67,11 +67,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("🚨 ANALYZE API ERROR:", error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message || String(error), 
-      stack: error.stack 
-    }, { status: 500 });
+    console.error("CRITICAL API FAILURE:", error.message, error.stack);
+    return NextResponse.json({ error: error.message || "Unknown Server Error" }, { status: 500 });
   }
 }
