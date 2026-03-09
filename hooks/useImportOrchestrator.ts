@@ -52,6 +52,7 @@ export function useImportOrchestrator() {
             const { data: dbInsight, error: dbError } = await supabase
               .from('insights')
               .insert({
+                id: insight.id, // Use the original ID
                 user_id: user.id,
                 processing_status: 'analyzing',
                 audio_url: filePath,
