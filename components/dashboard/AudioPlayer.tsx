@@ -18,11 +18,13 @@ export function AudioPlayer({ audioPath }: AudioPlayerProps) {
 
   useEffect(() => {
     const getSignedUrl = async () => {
+      console.log('Generating signed URL for:', audioPath);
       const { data, error } = await supabase.storage
         .from('meetings')
         .createSignedUrl(audioPath, 3600);
       
       if (data) {
+        console.log('Signed URL generated:', data.signedUrl);
         setSignedUrl(data.signedUrl);
       } else {
         console.error('Error generating signed URL:', error);
