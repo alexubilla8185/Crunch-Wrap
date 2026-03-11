@@ -2,14 +2,14 @@
 
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getInsight, deleteInsight } from '@/lib/storage/localDbService';
 import { Insight } from '@/lib/schemas';
 import { ArrowLeft, FileText, Mic, MessageSquare, Trash, ChevronDown } from 'lucide-react';
 import { TactileButton } from '@/components/ui/TactileButton';
 import { ChatDrawer } from '@/components/ui/ChatDrawer';
 import { useUIStore } from '@/lib/store';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
 import { AudioPlayer } from '@/components/dashboard/AudioPlayer';
 import { shouldUpdateStatus } from '@/lib/utils';
@@ -18,8 +18,11 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
   const resolvedParams = use(params);
   const id = resolvedParams.id;
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   const { showToast } = useUIStore();
   const supabase = createClient();
+  const queryClient = useQueryClient();
   
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -31,6 +34,14 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
     queryKey: ['localInsight', id],
     queryFn: () => getInsight(id),
     enabled: !!id,
+  });
+
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    }
   });
 
   const { data: supabaseInsight, isLoading: isSupabaseLoading } = useQuery({
@@ -48,6 +59,8 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
     enabled: !!id && localInsight?.processing_status !== 'local' && localInsight?.processing_status !== 'uploading',
   });
 
+  const isSharedMode = !!token || (supabaseInsight && (!currentUser || currentUser.id !== supabaseInsight.user_id));
+
   const finalStatus = shouldUpdateStatus(localInsight?.processing_status, supabaseInsight?.processing_status)
     ? supabaseInsight?.processing_status
     : localInsight?.processing_status;
@@ -64,6 +77,12 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
   const isTimedOut = insight?.processing_status === 'analyzing' && 
     insight?.updated_at && 
     (Date.now() - new Date(insight.updated_at).getTime() > 10 * 60 * 1000);
+
+  useEffect(() => {
+    if (!isLoading && !insight) {
+      router.push('/dashboard/files');
+    }
+  }, [isLoading, insight, router]);
 
   const handleRetry = async () => {
     const dbInsight = insight as any;
@@ -146,10 +165,22 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
     try { actionItems = JSON.parse(actionItems); } catch { actionItems = []; }
   }
 
-  const isAudioFile = dbInsight.audio_url && !dbInsight.audio_url.endsWith('.md') && !dbInsight.audio_url.endsWith('.txt');
+  const isAudioFile = !isSharedMode && dbInsight.audio_url && !dbInsight.audio_url.endsWith('.md') && !dbInsight.audio_url.endsWith('.txt');
 
   const handleDelete = async () => {
     await deleteInsight(id);
+    
+    // Aggressive Cache Management
+    queryClient.setQueryData(['localInsights'], (old: any[]) => 
+      old?.filter((item) => item.id !== id)
+    );
+    queryClient.setQueryData(['insights'], (old: any[]) => 
+      old?.filter((item) => item.id !== id)
+    );
+    queryClient.removeQueries({ queryKey: ['insight', id] });
+    queryClient.removeQueries({ queryKey: ['localInsight', id] });
+    queryClient.removeQueries({ queryKey: ['supabaseInsight', id] });
+
     showToast('Import deleted', 'info');
     router.push('/dashboard/files');
   };

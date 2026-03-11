@@ -39,7 +39,7 @@ export function useInsightSubscription() {
             intelligence: intelligence || oldData?.intelligence
           }));
           
-          queryClient.setQueriesData({ queryKey: ['insights'] }, (oldList: any[] | undefined) => {
+          queryClient.setQueryData(['insights'], (oldList: any[] | undefined) => {
             if (!oldList) return oldList;
             return oldList.map(item => item.id === id ? { ...item, ...payload.new, processing_status: newStatus, title: title || item.title } : item);
           });

@@ -119,8 +119,19 @@ export default function FilesPage() {
   const handleDelete = async () => {
     if (itemToDelete) {
       await deleteInsight(itemToDelete);
+      
+      // Aggressive Cache Management
+      queryClient.setQueryData(['localInsights'], (old: any[]) => 
+        old?.filter((item) => item.id !== itemToDelete)
+      );
+      queryClient.setQueryData(['insights'], (old: any[]) => 
+        old?.filter((item) => item.id !== itemToDelete)
+      );
+      queryClient.removeQueries({ queryKey: ['insight', itemToDelete] });
+      queryClient.removeQueries({ queryKey: ['localInsight', itemToDelete] });
+      queryClient.removeQueries({ queryKey: ['supabaseInsight', itemToDelete] });
+
       showToast('Import deleted', 'info');
-      queryClient.invalidateQueries({ queryKey: ['localInsights'] });
       setItemToDelete(null);
     }
   };
@@ -174,11 +185,11 @@ export default function FilesPage() {
                   key={insight.id}
                   className="group grid grid-cols-1 md:grid-cols-12 gap-4 px-4 py-4 md:py-3 border-b border-foreground/5 hover:bg-foreground/5 transition-colors items-center cursor-pointer"
                 >
-                  <div className="col-span-1 md:col-span-6 lg:col-span-7 flex items-center gap-3 overflow-hidden">
+                  <div className="col-span-1 md:col-span-6 lg:col-span-7 flex items-center gap-3 overflow-hidden min-w-0">
                     <div className="shrink-0 w-8 h-8 rounded-full bg-background border border-foreground/10 flex items-center justify-center group-hover:border-foreground/20 transition-colors">
                       {getIcon(insight)}
                     </div>
-                    <span className="font-serif text-base md:text-sm truncate">
+                    <span className="font-serif text-base md:text-sm truncate min-w-0">
                       {insight.title}
                     </span>
                   </div>
