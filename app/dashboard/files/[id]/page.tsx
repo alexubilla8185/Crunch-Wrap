@@ -318,6 +318,15 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
             )}
           </section>
         )}
+
+        {/* Telemetry Footer */}
+        {insight.intelligence?.metadata && (
+          <div className="text-xs text-gray-500 font-mono flex gap-4 mt-8 pt-4 border-t border-gray-200 dark:border-gray-800">
+            <span>Model: {insight.intelligence.metadata.model}</span>
+            <span>|</span>
+            <span>Latency: {insight.intelligence.metadata.duration}</span>
+          </div>
+        )}
       </div>
 
       <ChatDrawer 

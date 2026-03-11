@@ -48,11 +48,12 @@ export async function POST(req: Request) {
     // Determine if audio is > 15 minutes (approx 15MB for compressed audio)
     const isLongAudio = base64Audio.length > 15 * 1024 * 1024 * 1.33; // 15MB * base64 overhead
     const useProModel = isDeepAnalysisEnabled || isLongAudio;
-    const model = useProModel ? "gemini-3.1-pro-preview" : "gemini-3-flash-preview";
-    console.log('Calling AI model:', model, 'isDeepAnalysisEnabled:', isDeepAnalysisEnabled, 'isLongAudio:', isLongAudio);
+    const appliedModel = useProModel ? "gemini-3.1-pro-preview" : "gemini-3-flash-preview";
+    console.log('Calling AI model:', appliedModel, 'isDeepAnalysisEnabled:', isDeepAnalysisEnabled, 'isLongAudio:', isLongAudio);
 
+    const startTime = Date.now();
     const response = await ai.models.generateContent({
-      model,
+      model: appliedModel,
       contents: {
         parts: [
           { text: "Analyze this content and provide a structured summary, highlights, action items, topics, and sentiment." },
@@ -77,22 +78,24 @@ export async function POST(req: Request) {
         systemInstruction: "You are a top-tier analyst. Provide dense, high-signal analysis."
       }
     });
+    const duration = ((Date.now() - startTime) / 1000).toFixed(1);
     
     console.log('AI Response received:', response.text);
-    const intelligence = JSON.parse(response.text!);
+    const aiParsedData = JSON.parse(response.text!);
+    const finalIntelligence = { ...aiParsedData, metadata: { model: appliedModel, duration: duration + 's' } };
 
     // Update the insights table
     const { error: updateError } = await supabase
       .from('insights')
       .update({
         processing_status: 'completed',
-        title: intelligence.title,
-        summary: intelligence.summary,
-        highlights: intelligence.highlights,
-        action_items: intelligence.action_items,
-        topics: intelligence.topics,
-        sentiment: intelligence.sentiment,
-        intelligence: intelligence,
+        title: finalIntelligence.title,
+        summary: finalIntelligence.summary,
+        highlights: finalIntelligence.highlights,
+        action_items: finalIntelligence.action_items,
+        topics: finalIntelligence.topics,
+        sentiment: finalIntelligence.sentiment,
+        intelligence: finalIntelligence,
         updated_at: new Date().toISOString(),
       })
       .eq('id', insightId);

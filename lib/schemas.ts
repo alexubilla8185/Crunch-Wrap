@@ -22,6 +22,10 @@ export const InsightSchema = z.object({
     topics: z.array(z.string()),
     sentiment: z.enum(['POSITIVE', 'NEUTRAL', 'NEGATIVE', 'COMPLEX']),
     reading_time: z.string(),
+    metadata: z.object({
+      model: z.string(),
+      duration: z.string(),
+    }).optional(),
   }).optional(),
   retry_count: z.number().optional(),
   next_retry_at: z.string().datetime().optional(),
