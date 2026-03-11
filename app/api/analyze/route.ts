@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     // Determine if audio is > 15 minutes (approx 15MB for compressed audio)
     const isLongAudio = base64Audio && base64Audio.length > 15 * 1024 * 1024 * 1.33; // 15MB * base64 overhead
     const useProModel = isDeepAnalysisEnabled || isLongAudio;
-    const appliedModel = useProModel ? "gemini-3-pro" : "gemini-3-flash";
+    const appliedModel = useProModel ? "gemini-3.1-pro-preview" : "gemini-flash-latest";
     console.log('Calling AI model:', appliedModel, 'isDeepAnalysisEnabled:', isDeepAnalysisEnabled, 'isLongAudio:', !!isLongAudio);
 
     const startTime = Date.now();
