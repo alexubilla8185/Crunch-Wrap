@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { getAllLocalInsights, saveInsight } from '@/lib/storage/localDbService';
+import { getAllLocalInsights, saveInsight, getInsight } from '@/lib/storage/localDbService';
 import { useUIStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 
@@ -148,16 +148,22 @@ export function useImportOrchestrator() {
               title: intelligence.title || oldData?.title,
               intelligence: intelligence
             }));
-            queryClient.invalidateQueries({ queryKey: ['insights'] });
+            queryClient.setQueriesData({ queryKey: ['insights'] }, (oldList: any[] | undefined) => {
+              if (!oldList) return oldList;
+              return oldList.map(item => item.id === dbInsight.id ? { ...item, processing_status: 'completed', title: intelligence.title } : item);
+            });
 
             // 5. Mark as completed in local DB immediately
-            await saveInsight({
-              ...insight,
-              processing_status: 'completed',
-              intelligence: intelligence,
-              title: intelligence.title,
-              updated_at: new Date().toISOString(),
-            });
+            const localInsight = await getInsight(insight.id);
+            if (localInsight) {
+              await saveInsight({
+                ...localInsight,
+                processing_status: 'completed',
+                intelligence: intelligence,
+                title: intelligence.title,
+                updated_at: new Date().toISOString(),
+              });
+            }
 
           } catch (error) {
             console.error(`Failed to import insight ${insight.id}:`, error);

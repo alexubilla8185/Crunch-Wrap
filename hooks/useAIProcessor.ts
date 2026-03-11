@@ -30,7 +30,10 @@ export function useAIProcessor() {
         title: data.title || 'Audio Analysis',
         intelligence: data
       }));
-      queryClient.invalidateQueries({ queryKey: ['insights'] });
+      queryClient.setQueriesData({ queryKey: ['insights'] }, (oldList: any[] | undefined) => {
+        if (!oldList) return oldList;
+        return oldList.map(item => item.id === insightId ? { ...item, processing_status: 'completed', title: data.title || 'Audio Analysis' } : item);
+      });
       
       await saveInsight({
         id: insightId,
