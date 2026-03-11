@@ -2,11 +2,13 @@ import { useAudioStore } from '@/lib/audioStore';
 import { useUIStore } from '@/lib/store';
 import { saveInsight } from '@/lib/storage/localDbService';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function useAIProcessor() {
   const { setLocalSaveStatus } = useAudioStore();
   const { showToast } = useUIStore();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const processAudio = async (audioUrl: string, isDeepAnalysisEnabled: boolean) => {
     setLocalSaveStatus('saving'); // Reusing status for "Analyzing"
@@ -20,9 +22,19 @@ export function useAIProcessor() {
       
       const now = new Date().toISOString();
       const insightId = crypto.randomUUID();
+
+      // Update Cache
+      queryClient.setQueryData(['insight', insightId], (oldData: any) => ({
+        ...oldData,
+        processing_status: 'completed',
+        title: data.title || 'Audio Analysis',
+        intelligence: data
+      }));
+      queryClient.invalidateQueries({ queryKey: ['insights'] });
+      
       await saveInsight({
         id: insightId,
-        title: 'Audio Analysis',
+        title: data.title || 'Audio Analysis',
         raw_content: data.summary,
         processing_status: 'completed',
         intelligence: data,

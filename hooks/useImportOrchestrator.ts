@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { getAllLocalInsights, saveInsight } from '@/lib/storage/localDbService';
 import { useUIStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -9,6 +10,7 @@ export function useImportOrchestrator() {
   const { showToast } = useUIStore();
   const router = useRouter();
   const supabase = createClient();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const syncPendingInsights = async () => {
@@ -138,6 +140,15 @@ export function useImportOrchestrator() {
             }
 
             const { intelligence } = await response.json();
+
+            // 5. Update Cache
+            queryClient.setQueryData(['insight', dbInsight.id], (oldData: any) => ({
+              ...oldData,
+              processing_status: 'completed',
+              title: intelligence.title || oldData?.title,
+              intelligence: intelligence
+            }));
+            queryClient.invalidateQueries({ queryKey: ['insights'] });
 
             // 5. Mark as completed in local DB immediately
             await saveInsight({
