@@ -249,7 +249,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       <header className="mb-12">
-        {isAudioFile && (
+        {insight.processing_status === 'completed' && dbInsight.audio_url && isAudioFile && (
           <div className="mb-8">
             <AudioPlayer audioPath={dbInsight.audio_url} />
           </div>
