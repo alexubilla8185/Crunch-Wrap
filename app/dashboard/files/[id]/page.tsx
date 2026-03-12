@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getInsight, deleteInsight } from '@/lib/storage/localDbService';
@@ -65,11 +66,17 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
     ? supabaseInsight?.processing_status
     : localInsight?.processing_status;
 
+  // Use the insight that has the more advanced status for the base data
+  const baseInsight = (finalStatus === localInsight?.processing_status) ? localInsight : (supabaseInsight || localInsight);
+  const fallbackInsight = (finalStatus === localInsight?.processing_status) ? supabaseInsight : localInsight;
+
   const insight = localInsight ? {
-    ...localInsight,
-    ...supabaseInsight,
-    title: supabaseInsight?.title || localInsight.title || 'Untitled Insight',
+    ...fallbackInsight,
+    ...baseInsight,
+    title: baseInsight?.title || fallbackInsight?.title || 'Untitled Insight',
     processing_status: finalStatus || 'local',
+    intelligence: baseInsight?.intelligence || fallbackInsight?.intelligence,
+    summary: baseInsight?.summary || fallbackInsight?.summary,
   } as Insight : null;
 
   const isLoading = isLocalLoading || (isSupabaseLoading && !supabaseInsight);
@@ -104,30 +111,30 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
         throw new Error('Retry failed');
       }
       
-      const { intelligence } = await response.json();
-      
-      queryClient.setQueryData(['localInsight', insight.id], (oldData: any) => ({
-        ...oldData,
-        processing_status: 'completed',
-        title: intelligence.title || oldData?.title,
-        intelligence: intelligence
-      }));
-      
-      queryClient.setQueryData(['supabaseInsight', insight.id], (oldData: any) => ({
-        ...oldData,
-        processing_status: 'completed',
-        title: intelligence.title || oldData?.title,
-        intelligence: intelligence
-      }));
-      
-      queryClient.setQueriesData({ queryKey: ['insights'] }, (oldList: any[] | undefined) => {
-        if (!oldList) return oldList;
-        return oldList.map(item => item.id === insight.id ? { ...item, processing_status: 'completed', title: intelligence.title } : item);
-      });
-      
-      queryClient.setQueriesData({ queryKey: ['localInsights'] }, (oldList: any[] | undefined) => {
-        if (!oldList) return oldList;
-        return oldList.map(item => item.id === insight.id ? { ...item, processing_status: 'completed', title: intelligence.title } : item);
+      const responseData = await response.json();
+      const { intelligence, dbInsight: returnedDbInsight } = responseData;
+
+      unstable_batchedUpdates(() => {
+        const updatedData = {
+          ...returnedDbInsight,
+          processing_status: 'completed',
+          title: intelligence?.title,
+          intelligence: intelligence
+        };
+
+        queryClient.setQueryData(['localInsight', insight.id], (oldData: any) => ({ ...oldData, ...updatedData }));
+        queryClient.setQueryData(['supabaseInsight', insight.id], (oldData: any) => ({ ...oldData, ...updatedData }));
+        queryClient.setQueryData(['insight', insight.id], (oldData: any) => ({ ...oldData, ...updatedData }));
+        
+        queryClient.setQueriesData({ queryKey: ['insights'] }, (oldList: any[] | undefined) => {
+          if (!oldList) return oldList;
+          return oldList.map(item => item.id === insight.id ? { ...item, ...updatedData } : item);
+        });
+        
+        queryClient.setQueriesData({ queryKey: ['localInsights'] }, (oldList: any[] | undefined) => {
+          if (!oldList) return oldList;
+          return oldList.map(item => item.id === insight.id ? { ...item, ...updatedData } : item);
+        });
       });
 
       showToast('Analysis restarted and completed', 'success');
@@ -173,7 +180,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
 
   // Aggressively map variables from either the top-level Supabase columns or the intelligence JSON
   const dbInsight = insight as any;
-  const summary = dbInsight.summary || intelligence.summary;
+  const summary = (dbInsight.summary && dbInsight.summary !== 'Analyzing...') ? dbInsight.summary : (intelligence.summary || dbInsight.summary);
   const sentiment = dbInsight.sentiment || intelligence.sentiment;
   const readingTime = dbInsight.reading_time || intelligence.reading_time;
 
@@ -284,51 +291,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
         {/* Summary Section */}
         <section>
           <h2 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-4">AI Summary</h2>
-          {summary && summary !== 'Analyzing...' ? (
-            <div className="p-6 md:p-8 rounded-3xl bg-primary/5 border border-foreground/10 space-y-8">
-              <p className="font-serif text-lg md:text-xl leading-relaxed text-foreground/90">
-                {summary}
-              </p>
-              
-              {highlights && Array.isArray(highlights) && highlights.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-3">Highlights</h3>
-                  <ul className="list-disc list-inside space-y-2 text-foreground/80">
-                    {highlights.map((highlight: string, i: number) => (
-                      <li key={i} className="leading-relaxed">{highlight}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              
-              {actionItems && Array.isArray(actionItems) && actionItems.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-3">Action Items</h3>
-                  <ul className="space-y-3">
-                    {actionItems.map((item: string, i: number) => (
-                      <li key={i} className="flex items-start gap-3 text-foreground/80">
-                        <input type="checkbox" disabled className="mt-1.5 rounded border-foreground/20 text-primary focus:ring-primary" />
-                        <span className="leading-relaxed">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          ) : insight.processing_status === 'failed' || isTimedOut ? (
-            <div className="p-6 rounded-2xl border border-dashed border-red-500/20 bg-red-500/5 flex flex-col items-center justify-center text-center gap-4">
-              <span className="font-mono text-sm text-red-500/80">
-                Analysis failed or timed out.
-              </span>
-              <button 
-                onClick={handleRetry}
-                disabled={isRetrying}
-                className="px-4 py-2 rounded-full bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-              >
-                {isRetrying ? 'Retrying...' : 'Retry Analysis'}
-              </button>
-            </div>
-          ) : (
+          {insight.processing_status === 'uploading' || insight.processing_status === 'analyzing' ? (
             <div className="p-6 md:p-8 rounded-3xl bg-primary/5 border border-foreground/10 space-y-8">
               <div className="space-y-3">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse w-full"></div>
@@ -358,6 +321,50 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                 </div>
               </div>
+            </div>
+          ) : insight.processing_status === 'failed' || isTimedOut ? (
+            <div className="p-6 rounded-2xl border border-dashed border-red-500/20 bg-red-500/5 flex flex-col items-center justify-center text-center gap-4">
+              <span className="font-mono text-sm text-red-500/80">
+                Analysis failed or timed out.
+              </span>
+              <button 
+                onClick={handleRetry}
+                disabled={isRetrying}
+                className="px-4 py-2 rounded-full bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+              >
+                {isRetrying ? 'Retrying...' : 'Retry Analysis'}
+              </button>
+            </div>
+          ) : (
+            <div className="p-6 md:p-8 rounded-3xl bg-primary/5 border border-foreground/10 space-y-8">
+              <p className="font-serif text-lg md:text-xl leading-relaxed text-foreground/90">
+                {summary || 'No summary available.'}
+              </p>
+              
+              {highlights && Array.isArray(highlights) && highlights.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-3">Highlights</h3>
+                  <ul className="list-disc list-inside space-y-2 text-foreground/80">
+                    {highlights.map((highlight: string, i: number) => (
+                      <li key={i} className="leading-relaxed">{highlight}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {actionItems && Array.isArray(actionItems) && actionItems.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-3">Action Items</h3>
+                  <ul className="space-y-3">
+                    {actionItems.map((item: string, i: number) => (
+                      <li key={i} className="flex items-start gap-3 text-foreground/80">
+                        <input type="checkbox" disabled className="mt-1.5 rounded border-foreground/20 text-primary focus:ring-primary" />
+                        <span className="leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </section>

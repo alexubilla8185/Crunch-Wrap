@@ -6,6 +6,7 @@ import { useUIStore } from '@/lib/store';
 import type { Insight } from '@/lib/schemas';
 import { useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
+import { unstable_batchedUpdates } from 'react-dom';
 
 export function useFileDrop() {
   const [isDragging, setIsDragging] = useState(false);
@@ -193,46 +194,41 @@ export function useFileDrop() {
               throw new Error(errorData.error || 'Analysis failed');
             }
 
-            const { intelligence } = await response.json();
+            const responseData = await response.json();
+            console.log("API Payload:", responseData);
+            const { intelligence, dbInsight: returnedDbInsight } = responseData;
+            
+            unstable_batchedUpdates(() => {
+              // Update Cache
+              const updatedData = {
+                ...returnedDbInsight,
+                processing_status: 'completed',
+                title: intelligence?.title,
+                intelligence: intelligence
+              };
 
-            // Update Cache
-            queryClient.setQueryData(['insight', id], (oldData: any) => ({
-              ...oldData,
-              processing_status: 'completed',
-              title: intelligence.title || oldData?.title,
-              intelligence: intelligence
-            }));
-            
-            queryClient.setQueryData(['localInsight', id], (oldData: any) => ({
-              ...oldData,
-              processing_status: 'completed',
-              title: intelligence.title || oldData?.title,
-              intelligence: intelligence
-            }));
-            
-            queryClient.setQueryData(['supabaseInsight', id], (oldData: any) => ({
-              ...oldData,
-              processing_status: 'completed',
-              title: intelligence.title || oldData?.title,
-              intelligence: intelligence
-            }));
+              queryClient.setQueryData(['insight', id], (oldData: any) => ({ ...oldData, ...updatedData }));
+              queryClient.setQueryData(['localInsight', id], (oldData: any) => ({ ...oldData, ...updatedData }));
+              queryClient.setQueryData(['supabaseInsight', id], (oldData: any) => ({ ...oldData, ...updatedData }));
 
-            queryClient.setQueriesData({ queryKey: ['insights'] }, (oldList: any[] | undefined) => {
-              if (!oldList) return oldList;
-              return oldList.map(item => item.id === id ? { ...item, processing_status: 'completed', title: intelligence.title } : item);
-            });
-            
-            queryClient.setQueriesData({ queryKey: ['localInsights'] }, (oldList: any[] | undefined) => {
-              if (!oldList) return oldList;
-              return oldList.map(item => item.id === id ? { ...item, processing_status: 'completed', title: intelligence.title } : item);
+              queryClient.setQueriesData({ queryKey: ['insights'] }, (oldList: any[] | undefined) => {
+                if (!oldList) return oldList;
+                return oldList.map(item => item.id === id ? { ...item, ...updatedData } : item);
+              });
+              
+              queryClient.setQueriesData({ queryKey: ['localInsights'] }, (oldList: any[] | undefined) => {
+                if (!oldList) return oldList;
+                return oldList.map(item => item.id === id ? { ...item, ...updatedData } : item);
+              });
             });
 
             // Mark as completed in local DB
             await saveInsight({
               ...newInsight,
+              ...returnedDbInsight,
               processing_status: 'completed',
               intelligence: intelligence,
-              title: intelligence.title,
+              title: intelligence?.title,
               updated_at: new Date().toISOString(),
             });
 
