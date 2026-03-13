@@ -1,4 +1,4 @@
-import type {Metadata} from 'next';
+import type {Metadata, Viewport} from 'next';
 import {Newsreader, Geist_Mono} from 'next/font/google';
 import QueryProvider from '@/components/providers/QueryProvider';
 import ThemeProvider from '@/components/ThemeProvider';
@@ -15,6 +15,16 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   display: 'swap',
 });
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F8F9FA' },
+    { media: '(prefers-color-scheme: dark)', color: '#0E0E0E' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1, // Prevents iOS input zooming
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://crispy-bacon-v2.netlify.app'),
