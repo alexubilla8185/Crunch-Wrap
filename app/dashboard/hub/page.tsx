@@ -49,7 +49,7 @@ export default function HubPage() {
         <h1 className="text-3xl md:text-4xl font-serif font-medium tracking-tight mb-2">
           Command Center
         </h1>
-        <p className="text-foreground/60 font-sans text-sm md:text-base">
+        <p className="text-gray-500 dark:text-gray-400 font-sans text-sm md:text-base">
           Tactical intelligence hub. Drop files, audio, and notes to begin import.
         </p>
       </header>
@@ -80,16 +80,16 @@ export default function HubPage() {
               className={`w-16 h-16 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center transition-transform shadow-sm shrink-0 ${
                 isDragging
                   ? 'scale-110 text-primary'
-                  : 'group-hover:scale-110 text-foreground/70 group-hover:text-primary'
+                  : 'group-hover:scale-110 text-gray-500 dark:text-gray-400 group-hover:text-primary'
               }`}
             >
               <UploadCloud className="w-7 h-7" />
             </div>
             <div className="text-left">
-              <h2 className="text-xl font-serif font-medium mb-1 text-foreground/90">
+              <h2 className="text-xl font-serif font-medium mb-1 text-foreground">
                 {isDragging ? 'Drop to Save Locally' : 'Drop Intelligence Here'}
               </h2>
-              <p className="text-sm font-sans text-foreground/60 max-w-sm">
+              <p className="text-sm font-sans text-gray-500 dark:text-gray-400 max-w-sm">
                 Markdown, TXT, or Native Audio.
               </p>
             </div>
@@ -113,7 +113,7 @@ export default function HubPage() {
                   e.stopPropagation();
                   startRecording();
                 }}
-                className="flex items-center gap-3 px-6 py-3 rounded-full bg-white dark:bg-[#1E1E1E] text-foreground hover:bg-foreground/5 transition-colors shadow-sm cursor-pointer"
+                className="flex items-center gap-3 px-6 py-3 rounded-full bg-surface text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors shadow-sm cursor-pointer"
               >
                 <Mic className="w-4 h-4" />
                 <span className="font-sans font-medium text-sm">Record Voice Note</span>
@@ -125,25 +125,25 @@ export default function HubPage() {
 
       {/* M3 Metric Cards (Middle Section) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-        <div className="bg-white dark:bg-[#1A1A1A] rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
+        <div className="bg-surface rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <FileText className="w-16 h-16" />
           </div>
-          <p className="text-sm font-medium text-foreground/60 mb-2 relative z-10">Files Crunched</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 relative z-10">Files Crunched</p>
           <p className="text-4xl font-serif text-foreground relative z-10">{insights.length}</p>
         </div>
-        <div className="bg-white dark:bg-[#1A1A1A] rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
+        <div className="bg-surface rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <Activity className="w-16 h-16" />
           </div>
-          <p className="text-sm font-medium text-foreground/60 mb-2 relative z-10">Action Items</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 relative z-10">Action Items</p>
           <p className="text-4xl font-serif text-foreground relative z-10">{allActionItems.length}</p>
         </div>
-        <div className="bg-white dark:bg-[#1A1A1A] rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
+        <div className="bg-surface rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <Zap className="w-16 h-16" />
           </div>
-          <p className="text-sm font-medium text-foreground/60 mb-2 relative z-10">Fast Insights</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 relative z-10">Fast Insights</p>
           <p className="text-4xl font-serif text-foreground relative z-10">{insights.filter(i => i.processing_status === 'completed').length}</p>
         </div>
       </div>
@@ -153,8 +153,8 @@ export default function HubPage() {
         <h2 className="font-serif text-2xl mb-6">Active Matrix</h2>
         
         {insights.length === 0 ? (
-          <div className="py-12 text-center border border-dashed border-foreground/10 rounded-[24px] bg-foreground/5">
-            <p className="text-foreground/50 font-sans text-sm">
+          <div className="py-12 text-center border border-dashed border-black/10 dark:border-white/10 rounded-[24px] bg-black/5 dark:bg-white/5">
+            <p className="text-gray-500 dark:text-gray-400 font-sans text-sm">
               No active intelligence detected. Import a document to begin.
             </p>
           </div>
@@ -164,15 +164,15 @@ export default function HubPage() {
               <Link 
                 key={insight.id}
                 href={`/dashboard/files/${insight.id}`}
-                className="bg-white dark:bg-[#1A1A1A] rounded-[24px] p-6 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 flex flex-col gap-4 group border border-transparent hover:border-foreground/5"
+                className="bg-surface rounded-[24px] p-6 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 flex flex-col gap-4 group border border-transparent hover:border-black/5 dark:hover:border-white/5"
               >
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-serif text-lg font-medium line-clamp-2 group-hover:text-primary transition-colors">
                     {insight.title || 'Untitled Document'}
                   </h3>
                 </div>
-                <div className="mt-auto flex items-center justify-between pt-4 border-t border-foreground/5">
-                  <span className="text-xs text-foreground/50 font-mono">
+                <div className="mt-auto flex items-center justify-between pt-4 border-t border-black/5 dark:border-white/5">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">
                     {new Date(insight.created_at).toLocaleDateString()}
                   </span>
                   <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold ${

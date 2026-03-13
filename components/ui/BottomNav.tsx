@@ -26,7 +26,7 @@ export default function BottomNav() {
               className={`flex flex-col items-center gap-1 p-2 rounded-[24px] transition-colors min-w-[64px] ${
                 isActive
                   ? 'text-primary'
-                  : 'text-foreground/50 hover:text-foreground/80'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
               }`}
             >
               <div className={`p-1.5 rounded-full ${isActive ? 'bg-primary/10' : ''}`}>

@@ -36,7 +36,7 @@ export function ShareModal({ insightId, onClose }: { insightId: string; onClose:
 
   return (
     <div className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-50">
-      <div className="bg-[#E4E3E0] p-8 rounded-[32px] shadow-xl max-w-sm w-full space-y-6">
+      <div className="bg-background p-8 rounded-[32px] shadow-xl max-w-sm w-full space-y-6 border border-black/10 dark:border-white/10">
         <h2 className="font-serif text-2xl">Share Intelligence</h2>
         <select 
           value={expiration} 
@@ -49,7 +49,7 @@ export function ShareModal({ insightId, onClose }: { insightId: string; onClose:
         </select>
         <div className="flex gap-3">
           <TactileButton onClick={onClose} className="flex-1">Cancel</TactileButton>
-          <TactileButton onClick={handleShare} disabled={loading} className="flex-1 bg-[#141414] text-white">
+          <TactileButton onClick={handleShare} disabled={loading} className="flex-1 bg-primary text-primary-foreground">
             {loading ? 'Generating...' : 'Copy Link'}
           </TactileButton>
         </div>

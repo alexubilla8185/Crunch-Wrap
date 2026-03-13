@@ -41,7 +41,7 @@ export default function Sidebar({ email }: { email?: string }) {
         {isSidebarOpen && (
           <TactileButton
             onClick={toggleSidebar}
-            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200 text-foreground/70 hover:text-foreground bg-transparent shrink-0"
+            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200 text-gray-500 dark:text-gray-400 hover:text-foreground bg-transparent shrink-0"
             aria-label="Toggle Sidebar"
           >
             <PanelLeftClose size={20} />
@@ -60,7 +60,7 @@ export default function Sidebar({ email }: { email?: string }) {
               className={`flex items-center gap-3 px-3 py-2.5 rounded-full transition-colors duration-200 ${
                 isActive
                   ? 'bg-primary/10 text-primary font-medium'
-                  : 'text-foreground/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground'
               }`}
             >
               <Icon size={20} className="shrink-0" />
@@ -78,7 +78,7 @@ export default function Sidebar({ email }: { email?: string }) {
         )}
         <TactileButton
           onClick={toggleTheme}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-full text-foreground/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground transition-colors duration-200 w-full bg-transparent"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-full text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground transition-colors duration-200 w-full bg-transparent"
           aria-label={theme === 'charcoal' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
           {theme === 'charcoal' ? <Sun size={20} className="shrink-0" /> : <Moon size={20} className="shrink-0" />}

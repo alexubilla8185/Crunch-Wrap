@@ -19,7 +19,7 @@ export default async function SharedInsightPage({ params }: { params: Promise<{ 
     return (
       <div className="max-w-3xl mx-auto p-12 font-sans text-center">
         <h1 className="font-serif text-4xl mb-4">Expired</h1>
-        <p className="text-foreground/80">This intelligence briefing has expired or does not exist.</p>
+        <p className="text-gray-600 dark:text-gray-300">This intelligence briefing has expired or does not exist.</p>
       </div>
     );
   }
@@ -34,12 +34,12 @@ export default async function SharedInsightPage({ params }: { params: Promise<{ 
   if (insightError || !insight) notFound();
 
   return (
-    <div className="max-w-3xl mx-auto p-12 font-sans bg-[#E4E3E0] min-h-screen">
+    <div className="max-w-3xl mx-auto p-12 font-sans bg-background text-foreground min-h-screen">
       <h1 className="font-serif text-4xl mb-8">{insight.title}</h1>
       <div className="space-y-8">
         <section>
           <h2 className="font-serif text-xl mb-4">Summary</h2>
-          <p className="text-foreground/80 leading-relaxed">{insight.intelligence.summary}</p>
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{insight.intelligence.summary}</p>
         </section>
         <section>
           <h2 className="font-serif text-xl mb-4">Highlights</h2>

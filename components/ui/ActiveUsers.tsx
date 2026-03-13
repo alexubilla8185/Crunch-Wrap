@@ -20,7 +20,7 @@ export default function ActiveUsers() {
         </div>
       ))}
       {activeUsers.length > 0 && (
-        <div className="ml-4 text-xs text-foreground/40 font-mono">
+        <div className="ml-4 text-xs text-gray-400 dark:text-gray-500 font-mono">
           {activeUsers.length} online
         </div>
       )}

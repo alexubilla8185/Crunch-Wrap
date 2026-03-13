@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 
 const MarkdownRenderer = dynamic(() => import('@/components/ui/MarkdownRenderer'), {
   ssr: false,
-  loading: () => <div className="animate-pulse bg-foreground/5 h-20 rounded-[24px]" />,
+  loading: () => <div className="animate-pulse bg-black/5 dark:bg-white/5 h-20 rounded-[24px]" />,
 });
 
 export default function ChatPage() {
@@ -42,16 +42,16 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen relative">
       {/* Header */}
-      <header className="flex-none p-4 md:p-6 border-b border-foreground/10 bg-background/80 backdrop-blur-sm sticky top-0 z-10">
+      <header className="flex-none p-4 md:p-6 border-b border-black/10 dark:border-white/10 bg-background/80 backdrop-blur-sm sticky top-0 z-10">
         <h1 className="text-xl font-serif font-medium tracking-tight">Global Chat</h1>
-        <p className="text-sm text-foreground/50 font-sans">Converse with your imported notes and files.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 font-sans">Converse with your imported notes and files.</p>
       </header>
 
       {/* Message Feed */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-32 md:pb-24">
         <div className="max-w-3xl mx-auto space-y-12">
           {messages.length === 0 ? (
-            <div className="text-center text-foreground/40 font-serif italic mt-20">
+            <div className="text-center text-gray-400 dark:text-gray-500 font-serif italic mt-20">
               What did we decide in yesterday&apos;s meeting?
             </div>
           ) : (
@@ -63,7 +63,7 @@ export default function ChatPage() {
                 }`}
               >
                 {m.role === 'user' ? (
-                  <div className="max-w-[80%] text-foreground/70 font-sans text-base leading-relaxed px-4 py-2 border-l-2 border-foreground/20">
+                  <div className="max-w-[80%] text-gray-600 dark:text-gray-300 font-sans text-base leading-relaxed px-4 py-2 border-l-2 border-black/20 dark:border-white/20">
                     {m.parts.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('')}
                   </div>
                 ) : (
@@ -83,10 +83,10 @@ export default function ChatPage() {
         <div className="max-w-3xl mx-auto pointer-events-auto">
           <form
             onSubmit={handleSubmit}
-            className="relative flex items-end bg-background border border-foreground/10 rounded-[24px] shadow-sm focus-within:ring-1 focus-within:ring-foreground/20 transition-all"
+            className="relative flex items-end bg-background border border-black/10 dark:border-white/10 rounded-[24px] shadow-sm focus-within:ring-1 focus-within:ring-black/20 dark:focus-within:ring-white/20 transition-all"
           >
             <textarea
-              className="w-full max-h-48 min-h-[56px] bg-transparent border-none resize-none py-4 pl-4 pr-12 focus:outline-none focus:ring-0 font-sans text-base placeholder:text-foreground/30"
+              className="w-full max-h-48 min-h-[56px] bg-transparent border-none resize-none py-4 pl-4 pr-12 focus:outline-none focus:ring-0 font-sans text-base placeholder:text-gray-400 dark:placeholder:text-gray-500"
               placeholder="Ask anything..."
               value={input}
               onChange={handleInputChange}
@@ -101,13 +101,13 @@ export default function ChatPage() {
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="absolute right-2 bottom-2 p-2 rounded-[24px] text-foreground/50 hover:text-foreground hover:bg-foreground/5 disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
+              className="absolute right-2 bottom-2 p-2 rounded-[24px] text-gray-500 dark:text-gray-400 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
             >
               <Send size={20} />
             </button>
           </form>
           <div className="text-center mt-2">
-            <span className="text-[10px] text-foreground/40 font-sans uppercase tracking-widest">
+            <span className="text-[10px] text-gray-400 dark:text-gray-500 font-sans uppercase tracking-widest">
               AI can make mistakes. Verify important information.
             </span>
           </div>

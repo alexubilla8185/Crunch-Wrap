@@ -149,7 +149,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center p-6">
-        <span className="font-mono text-sm text-foreground/50 animate-pulse">Loading intelligence...</span>
+        <span className="font-mono text-sm text-gray-500 dark:text-gray-400 animate-pulse">Loading intelligence...</span>
       </div>
     );
   }
@@ -158,7 +158,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
         <h2 className="text-2xl font-serif font-medium mb-2">Insight Not Found</h2>
-        <p className="text-foreground/60 mb-6">The intelligence you are looking for does not exist or has been deleted.</p>
+        <p className="text-gray-500 dark:text-gray-400 mb-6">The intelligence you are looking for does not exist or has been deleted.</p>
         <Link
           href="/dashboard/files"
           className="flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-opacity font-medium text-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -224,7 +224,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
       <div className="mb-8 flex items-center justify-between">
         <Link
           href="/dashboard/files"
-          className="inline-flex items-center gap-2 text-sm font-mono text-foreground/60 hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="inline-flex items-center gap-2 text-sm font-mono text-gray-500 dark:text-gray-400 hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Library
         </Link>
@@ -253,10 +253,10 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
           </div>
         )}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-primary/5 border border-foreground/10 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-primary/5 border border-black/10 dark:border-white/10 flex items-center justify-center">
             {isAudio ? <Mic className="w-5 h-5 text-primary" /> : <FileText className="w-5 h-5 text-primary" />}
           </div>
-          <span className="font-mono text-xs text-foreground/50 uppercase tracking-wider">
+          <span className="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
             {new Date(insight.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </span>
         </div>
@@ -268,7 +268,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
         
         {(sentiment || readingTime || (topics && topics.length > 0)) && (
           <div className="flex flex-col gap-4">
-            <div className="font-mono text-xs text-foreground/50 uppercase tracking-wider">
+            <div className="font-mono text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               {sentiment && <span>{sentiment}</span>}
               {sentiment && readingTime && <span> · </span>}
               {readingTime && <span>{readingTime}</span>}
@@ -290,9 +290,9 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
       <div className="space-y-12">
         {/* Summary Section */}
         <section>
-          <h2 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-4">AI Summary</h2>
+          <h2 className="text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">AI Summary</h2>
           {insight.processing_status === 'uploading' || insight.processing_status === 'analyzing' ? (
-            <div className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-foreground/10 space-y-8">
+            <div className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10 space-y-8">
               <div className="space-y-3">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse w-full"></div>
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse w-11/12"></div>
@@ -300,7 +300,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
               </div>
               
               <div>
-                <h3 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-3">Highlights</h3>
+                <h3 className="text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Highlights</h3>
                 <div className="space-y-3">
                   <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse w-3/4"></div>
                   <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse w-5/6"></div>
@@ -309,7 +309,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
               </div>
               
               <div>
-                <h3 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-3">Action Items</h3>
+                <h3 className="text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Action Items</h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="w-4 h-4 rounded bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
@@ -336,15 +336,15 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
               </button>
             </div>
           ) : (
-            <div className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-foreground/10 space-y-8">
-              <p className="font-serif text-lg md:text-xl leading-relaxed text-foreground/90">
+            <div className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10 space-y-8">
+              <p className="font-serif text-lg md:text-xl leading-relaxed text-foreground">
                 {summary || 'No summary available.'}
               </p>
               
               {highlights && Array.isArray(highlights) && highlights.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-3">Highlights</h3>
-                  <ul className="list-disc list-inside space-y-2 text-foreground/80">
+                  <h3 className="text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Highlights</h3>
+                  <ul className="list-disc list-inside space-y-2 text-foreground">
                     {highlights.map((highlight: string) => (
                       <li key={highlight} className="leading-relaxed">{highlight}</li>
                     ))}
@@ -354,11 +354,11 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
               
               {actionItems && Array.isArray(actionItems) && actionItems.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-mono text-foreground/50 uppercase tracking-wider mb-3">Action Items</h3>
+                  <h3 className="text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Action Items</h3>
                   <ul className="space-y-3">
                     {actionItems.map((item: string) => (
-                      <li key={item} className="flex items-start gap-3 text-foreground/80">
-                        <input type="checkbox" disabled className="mt-1.5 rounded border-foreground/20 text-primary focus:ring-primary" />
+                      <li key={item} className="flex items-start gap-3 text-foreground">
+                        <input type="checkbox" disabled className="mt-1.5 rounded border-black/20 dark:border-white/20 text-primary focus:ring-primary" />
                         <span className="leading-relaxed">{item}</span>
                       </li>
                     ))}
@@ -374,14 +374,14 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
           <section>
             <button 
               onClick={() => setIsRawTextOpen(!isRawTextOpen)}
-              className="flex items-center gap-2 text-xs font-mono text-foreground/50 uppercase tracking-wider mb-4 hover:text-foreground transition-colors"
+              className="flex items-center gap-2 text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 hover:text-foreground transition-colors"
             >
               Raw Document Transcript
               <ChevronDown className={`w-4 h-4 transition-transform ${isRawTextOpen ? 'rotate-180' : ''}`} />
             </button>
             {isRawTextOpen && (
-              <div className="p-6 rounded-[24px] bg-background border border-foreground/10 overflow-x-auto animate-in fade-in slide-in-from-top-2 duration-300">
-                <pre className="font-mono text-xs md:text-sm text-foreground/70 whitespace-pre-wrap break-words">
+              <div className="p-6 rounded-[24px] bg-background border border-black/10 dark:border-white/10 overflow-x-auto animate-in fade-in slide-in-from-top-2 duration-300">
+                <pre className="font-mono text-xs md:text-sm text-gray-500 dark:text-gray-400 whitespace-pre-wrap break-words">
                   {insight.raw_content}
                 </pre>
               </div>
@@ -407,13 +407,13 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
 
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-[32px] bg-background p-6 shadow-2xl border border-foreground/10">
+          <div className="w-full max-w-md rounded-[32px] bg-background p-6 shadow-2xl border border-black/10 dark:border-white/10">
             <h2 className="font-serif text-xl mb-4">Delete Intelligence?</h2>
-            <p className="text-foreground/60 mb-6">This action cannot be undone.</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">This action cannot be undone.</p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 rounded-full text-sm font-medium hover:bg-foreground/5 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 aria-label="Cancel"
               >
                 Cancel

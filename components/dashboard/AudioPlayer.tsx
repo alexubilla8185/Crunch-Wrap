@@ -114,7 +114,7 @@ export function AudioPlayer({ audioPath }: AudioPlayerProps) {
   };
 
   return (
-    <div className="bg-foreground/5 border border-foreground/10 p-4 rounded-[24px] flex items-center gap-4">
+    <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-4 rounded-[24px] flex items-center gap-4">
       {signedUrl && (
         <audio
           ref={audioRef}
@@ -150,17 +150,17 @@ export function AudioPlayer({ audioPath }: AudioPlayerProps) {
         value={progress || 0}
         onChange={handleSeek}
         disabled={!signedUrl || isLoading}
-        className="flex-1 h-2 bg-foreground/10 rounded-full cursor-pointer accent-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex-1 h-2 bg-black/10 dark:bg-white/10 rounded-full cursor-pointer accent-primary disabled:opacity-50 disabled:cursor-not-allowed"
       />
 
-      <button onClick={toggleSpeed} className="px-3 py-1.5 rounded-[16px] bg-background border border-foreground/10 text-xs font-mono hover:bg-foreground/5 transition-colors">
+      <button onClick={toggleSpeed} className="px-3 py-1.5 rounded-[16px] bg-background border border-black/10 dark:border-white/10 text-xs font-mono hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
         {playbackRate}x
       </button>
 
       <button 
         onClick={handleDownload} 
         disabled={isLoading}
-        className="w-10 h-10 rounded-full bg-background border border-foreground/10 flex items-center justify-center hover:bg-foreground/5 transition-colors disabled:opacity-50"
+        className="w-10 h-10 rounded-full bg-background border border-black/10 dark:border-white/10 flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 transition-colors disabled:opacity-50"
       >
         <Download className="w-4 h-4" />
       </button>

@@ -47,7 +47,7 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-4 bg-background text-foreground">
-      <div className="w-full max-w-md p-8 rounded-[32px] border border-foreground/10 bg-primary/5">
+      <div className="w-full max-w-md p-8 rounded-[32px] border border-black/10 dark:border-white/10 bg-primary/5">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-serif font-medium tracking-tight mb-2">
             Crunch Wrap
@@ -71,7 +71,7 @@ export default function LoginPage() {
             <input
               {...register('email')}
               type="email"
-              className="w-full px-4 py-3 rounded-full bg-background border border-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-sans"
+              className="w-full px-4 py-3 rounded-full bg-background border border-black/10 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-sans"
               placeholder="agent@crispybacon.io"
               disabled={isLoading}
             />
@@ -89,7 +89,7 @@ export default function LoginPage() {
             <input
               {...register('password')}
               type="password"
-              className="w-full px-4 py-3 rounded-full bg-background border border-foreground/10 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-sans"
+              className="w-full px-4 py-3 rounded-full bg-background border border-black/10 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-sans"
               placeholder="••••••••"
               disabled={isLoading}
             />
@@ -115,7 +115,7 @@ export default function LoginPage() {
             )}
           </button>
 
-          <hr className="border-foreground/10 my-6" />
+          <hr className="border-black/10 dark:border-white/10 my-6" />
 
           <button
             type="button"

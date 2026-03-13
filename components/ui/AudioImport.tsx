@@ -101,7 +101,7 @@ export default function AudioImport() {
   };
 
   return (
-    <div className="p-6 border border-foreground/10 rounded-[24px] bg-background shadow-sm space-y-6">
+    <div className="p-6 border border-black/10 dark:border-white/10 rounded-[24px] bg-background shadow-sm space-y-6">
       <h2 className="text-lg font-serif">Audio Import</h2>
       
       <div className="flex gap-4">
@@ -124,7 +124,7 @@ export default function AudioImport() {
           id="file-upload"
         />
         <label htmlFor="file-upload" className="flex-1">
-          <div className="h-full flex items-center justify-center gap-2 border border-foreground/10 rounded-[24px] cursor-pointer hover:bg-foreground/5 transition-colors">
+          <div className="h-full flex items-center justify-center gap-2 border border-black/10 dark:border-white/10 rounded-[24px] cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
             <Upload size={20} />
             Import File
           </div>
@@ -142,14 +142,14 @@ export default function AudioImport() {
       </div>
 
       {localSaveStatus === 'saving' && (
-        <div className="flex items-center justify-center gap-2 text-foreground/50">
+        <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
           <Loader2 className="animate-spin" />
           Securing locally...
         </div>
       )}
 
       {isUploading && (
-        <div className="flex items-center justify-center gap-2 text-foreground/50">
+        <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
           <Loader2 className="animate-spin" />
           Importing to cloud...
         </div>

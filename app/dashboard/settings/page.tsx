@@ -128,14 +128,14 @@ export default function SettingsPage() {
         <h1 className="text-3xl md:text-4xl font-serif font-medium tracking-tight mb-2">
           Settings
         </h1>
-        <p className="text-foreground/60 font-sans text-sm md:text-base">
+        <p className="text-gray-500 dark:text-gray-400 font-sans text-sm md:text-base">
           Configure intelligence, storage, and account preferences.
         </p>
       </header>
 
       <div className="space-y-8">
         {/* Aesthetics Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-foreground/10">
+        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
           <div className="flex items-center gap-3 mb-6">
             <Palette className="w-6 h-6 text-primary" />
             <h2 className="text-xl font-serif font-medium">Aesthetics</h2>
@@ -143,13 +143,13 @@ export default function SettingsPage() {
           
           <div>
             <h3 className="text-sm font-medium mb-3">Theme Selection</h3>
-            <div className="flex p-1 bg-background rounded-full border border-foreground/10 w-fit">
+            <div className="flex p-1 bg-background rounded-full border border-black/10 dark:border-white/10 w-fit">
               <button
                 onClick={() => theme !== 'sandstone' && toggleTheme()}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                   theme === 'sandstone'
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-foreground/60 hover:text-foreground'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                 }`}
               >
                 Sandstone (Light)
@@ -159,20 +159,20 @@ export default function SettingsPage() {
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                   theme === 'charcoal'
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-foreground/60 hover:text-foreground'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                 }`}
               >
                 Charcoal (Dark)
               </button>
             </div>
-            <p className="text-xs text-foreground/50 mt-3 max-w-xs">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 max-w-xs">
               Select your preferred visual environment.
             </p>
           </div>
         </section>
 
         {/* Data Ownership Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-foreground/10">
+        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
           <div className="flex items-center gap-3 mb-6">
             <Download className="w-6 h-6 text-primary" />
             <h2 className="text-xl font-serif font-medium">Data Ownership</h2>
@@ -180,7 +180,7 @@ export default function SettingsPage() {
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-md">
-              <p className="text-sm text-foreground/70 mb-2">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                 Download a complete backup of all your notes and action items as a portable Markdown file.
               </p>
             </div>
@@ -188,7 +188,7 @@ export default function SettingsPage() {
             <TactileButton
               onClick={handleExport}
               disabled={isExporting}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-foreground/10 text-foreground hover:bg-foreground/5 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-black/10 dark:border-white/10 text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <Download className="w-4 h-4" />
               <span className="font-sans font-medium text-sm">
@@ -199,7 +199,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Intelligence Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-foreground/10">
+        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
           <div className="flex items-center gap-3 mb-6">
             <BrainCircuit className="w-6 h-6 text-primary" />
             <h2 className="text-xl font-serif font-medium">Intelligence</h2>
@@ -208,13 +208,13 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-sm font-medium mb-3">Model Selection</h3>
-              <div className="flex p-1 bg-background rounded-full border border-foreground/10 w-fit">
+              <div className="flex p-1 bg-background rounded-full border border-black/10 dark:border-white/10 w-fit">
                 <button
                   onClick={() => setAIPreferences({ model: 'flash' })}
                   className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                     aiPreferences.model === 'flash'
                       ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-foreground/60 hover:text-foreground'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                   }`}
                 >
                   Flash (Fast)
@@ -224,26 +224,26 @@ export default function SettingsPage() {
                   className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                     aiPreferences.model === 'pro'
                       ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-foreground/60 hover:text-foreground'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                   }`}
                 >
                   Pro (Deep)
                 </button>
               </div>
-              <p className="text-xs text-foreground/50 mt-3 max-w-xs">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 max-w-xs">
                 Flash is optimized for speed and daily tasks. Pro uses advanced reasoning for complex analysis.
               </p>
             </div>
 
             <div>
               <h3 className="text-sm font-medium mb-3">Response Tone</h3>
-              <div className="flex p-1 bg-background rounded-full border border-foreground/10 w-fit">
+              <div className="flex p-1 bg-background rounded-full border border-black/10 dark:border-white/10 w-fit">
                 <button
                   onClick={() => setAIPreferences({ tone: 'direct' })}
                   className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                     aiPreferences.tone === 'direct'
                       ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-foreground/60 hover:text-foreground'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                   }`}
                 >
                   Direct
@@ -253,13 +253,13 @@ export default function SettingsPage() {
                   className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                     aiPreferences.tone === 'detailed'
                       ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-foreground/60 hover:text-foreground'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                   }`}
                 >
                   Detailed
                 </button>
               </div>
-              <p className="text-xs text-foreground/50 mt-3 max-w-xs">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 max-w-xs">
                 Direct provides concise, actionable summaries. Detailed includes expansive context and nuance.
               </p>
             </div>
@@ -267,7 +267,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Local Storage Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-foreground/10">
+        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
           <div className="flex items-center gap-3 mb-6">
             <Database className="w-6 h-6 text-primary" />
             <h2 className="text-xl font-serif font-medium">Local Storage</h2>
@@ -275,11 +275,11 @@ export default function SettingsPage() {
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-md">
-              <p className="text-sm text-foreground/70 mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                 Crunch Wrap uses a Local-First architecture. Your data is processed and stored on your device before importing, ensuring maximum privacy and offline capability.
               </p>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-foreground/50 uppercase tracking-wider font-semibold">Local Database Size:</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Local Database Size:</span>
                 <span className="font-mono text-sm font-medium">24.5 MB</span>
               </div>
             </div>
@@ -287,7 +287,7 @@ export default function SettingsPage() {
             <TactileButton
               onClick={() => setShowClearModal(true)}
               disabled={isClearing}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-foreground/10 text-foreground hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-black/10 dark:border-white/10 text-foreground hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <Trash2 className="w-4 h-4" />
               <span className="font-sans font-medium text-sm">
@@ -298,7 +298,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Account Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-foreground/10">
+        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
           <div className="flex items-center gap-3 mb-6">
             <User className="w-6 h-6 text-primary" />
             <h2 className="text-xl font-serif font-medium">Account</h2>
@@ -306,14 +306,14 @@ export default function SettingsPage() {
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <p className="text-xs text-foreground/50 uppercase tracking-wider font-semibold mb-1">Signed in as</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Signed in as</p>
               <p className="font-mono text-sm font-medium">{userEmail || 'Loading...'}</p>
             </div>
             
             <TactileButton
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-foreground/10 text-foreground hover:bg-foreground/5 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-black/10 dark:border-white/10 text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <LogOut className="w-4 h-4" />
               <span className="font-sans font-medium text-sm">
@@ -326,14 +326,14 @@ export default function SettingsPage() {
 
       {showClearModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-[32px] bg-background p-6 shadow-2xl border border-foreground/10">
+          <div className="w-full max-w-md rounded-[32px] bg-background p-6 shadow-2xl border border-black/10 dark:border-white/10">
             <h2 className="font-serif text-xl mb-4">Wipe Local Database?</h2>
-            <p className="text-foreground/60 mb-6">This will permanently destroy all local intelligence and audio files. This cannot be undone.</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">This will permanently destroy all local intelligence and audio files. This cannot be undone.</p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowClearModal(false)}
                 disabled={isClearing}
-                className="px-4 py-2 rounded-full text-sm font-medium hover:bg-foreground/5 transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 aria-label="Cancel"
               >
                 Cancel
