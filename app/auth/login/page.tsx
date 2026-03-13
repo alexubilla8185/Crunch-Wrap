@@ -50,10 +50,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8 rounded-[2rem] border border-foreground/10 bg-primary/5">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-serif font-medium tracking-tight mb-2">
-            Crispy Bacon v2
+            Crunch Wrap
           </h1>
           <p className="text-sm opacity-70 font-mono">
-            Secure Intelligence Access
+            Your files, crunched. Your insights, wrapped.
           </p>
         </div>
 

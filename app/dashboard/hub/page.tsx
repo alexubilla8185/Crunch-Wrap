@@ -44,7 +44,7 @@ export default function HubPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col p-6 md:p-12 max-w-5xl mx-auto w-full gap-8 pb-12">
+    <div className="flex-1 flex flex-col p-4 sm:p-6 md:p-8 max-w-5xl mx-auto w-full gap-8 pb-12">
       <header>
         <h1 className="text-3xl md:text-4xl font-serif font-medium tracking-tight mb-2">
           Intelligence Hub
@@ -152,7 +152,7 @@ export default function HubPage() {
                 </p>
                 <Link 
                   href={`/dashboard/files/${item.insightId}`}
-                  className="shrink-0 inline-flex items-center"
+                  className="shrink-0 inline-flex items-center min-w-0 flex-1 justify-end"
                 >
                   <span className="bg-primary/5 text-primary hover:bg-primary/10 transition-colors text-xs px-3 py-1.5 rounded-md font-medium truncate max-w-[200px]">
                     {item.insightTitle}

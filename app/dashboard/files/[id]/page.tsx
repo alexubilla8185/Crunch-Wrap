@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState, use, useMemo } from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -70,14 +70,14 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
   const baseInsight = (finalStatus === localInsight?.processing_status) ? localInsight : (supabaseInsight || localInsight);
   const fallbackInsight = (finalStatus === localInsight?.processing_status) ? supabaseInsight : localInsight;
 
-  const insight = (localInsight || supabaseInsight) ? {
+  const insight = useMemo(() => (localInsight || supabaseInsight) ? {
     ...fallbackInsight,
     ...baseInsight,
     title: baseInsight?.title || fallbackInsight?.title || 'Untitled Insight',
     processing_status: finalStatus || 'local',
     intelligence: baseInsight?.intelligence || fallbackInsight?.intelligence,
     summary: baseInsight?.summary || fallbackInsight?.summary,
-  } as Insight : null;
+  } as Insight : null, [localInsight, supabaseInsight, fallbackInsight, baseInsight, finalStatus]);
 
   const isLoading = (!localInsight && !supabaseInsight) && (isLocalLoading || isSupabaseLoading);
 
@@ -220,7 +220,7 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
   };
 
   return (
-    <div className="flex-1 flex flex-col p-6 md:p-12 max-w-4xl mx-auto w-full">
+    <div className="flex-1 flex flex-col p-4 sm:p-6 md:p-8 max-w-4xl mx-auto w-full">
       <div className="mb-8 flex items-center justify-between">
         <Link
           href="/dashboard/files"
@@ -231,19 +231,17 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setShowDeleteModal(true)}
-            className="px-4 py-2 rounded-xl text-sm font-mono border transition-all text-red-500 hover:bg-red-500/10 border-red-500/20 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-sm font-mono border transition-all text-red-500 hover:bg-red-500/10 border-red-500/20 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             aria-label="Delete this intelligence"
           >
-            <div className="flex items-center gap-2">
-              <Trash className="w-4 h-4" /> Delete
-            </div>
+            <Trash className="w-4 h-4" />
           </button>
           <TactileButton 
             onClick={() => setIsChatOpen(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-opacity font-medium text-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             aria-label="Ask Document Assistant"
           >
-            <MessageSquare className="w-4 h-4" /> Ask Assistant
+            <MessageSquare className="w-4 h-4" /> <span className="hidden sm:inline">Ask Assistant</span>
           </TactileButton>
         </div>
       </div>
@@ -262,9 +260,11 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
             {new Date(insight.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </span>
         </div>
-        <h1 className="text-3xl md:text-5xl font-serif font-medium tracking-tight leading-tight mb-4">
-          {insight.title}
-        </h1>
+        <div className="flex min-w-0 flex-1">
+          <h1 className="text-3xl md:text-5xl font-serif font-medium tracking-tight leading-tight mb-4 break-words">
+            {insight.title}
+          </h1>
+        </div>
         
         {(sentiment || readingTime || (topics && topics.length > 0)) && (
           <div className="flex flex-col gap-4">

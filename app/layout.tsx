@@ -18,20 +18,22 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://crispy-bacon-v2.netlify.app'),
-  title: "Crispy Bacon | Privacy-First AI Intelligence",
-  description: "Transform scattered meeting notes into instant, actionable intelligence. The privacy-first AI knowledge base built for teams that refuse to lose.",
+  title: {
+    template: '%s | Crunch Wrap',
+    default: 'Crunch Wrap',
+  },
+  description: "Your files, crunched. Your insights, wrapped. Lightning-fast AI audio transcription and file analysis.",
+  applicationName: "Crunch Wrap",
   openGraph: {
-    title: "Crispy Bacon | Privacy-First AI Intelligence",
-    description: "Transform scattered meeting notes into instant, actionable intelligence. The privacy-first AI knowledge base built for teams that refuse to lose.",
+    title: "Crunch Wrap",
+    description: "Your files, crunched. Your insights, wrapped. Lightning-fast AI audio transcription and file analysis.",
     url: process.env.NEXT_PUBLIC_APP_URL || 'https://crispybacon.ai',
-    siteName: "Crispy Bacon",
-    images: ['/og-image.webp'],
+    siteName: "Crunch Wrap",
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Crispy Bacon | Privacy-First AI Intelligence",
-    description: "Transform scattered meeting notes into instant, actionable intelligence. The privacy-first AI knowledge base built for teams that refuse to lose.",
-    images: ['/og-image.webp'],
+    title: "Crunch Wrap",
+    description: "Your files, crunched. Your insights, wrapped. Lightning-fast AI audio transcription and file analysis.",
   },
 };
 

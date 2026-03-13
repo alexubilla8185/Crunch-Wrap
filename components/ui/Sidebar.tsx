@@ -7,6 +7,7 @@ import { useUIStore } from '@/lib/store';
 
 import ActiveUsers from '@/components/ui/ActiveUsers';
 import { TactileButton } from '@/components/ui/TactileButton';
+import { CrunchWrapLogo } from '@/components/CrunchWrapLogo';
 
 export default function Sidebar({ email }: { email?: string }) {
   const { isSidebarOpen, toggleSidebar, theme, toggleTheme } = useUIStore();
@@ -24,19 +25,28 @@ export default function Sidebar({ email }: { email?: string }) {
         isSidebarOpen ? 'w-64' : 'w-20'
       }`}
     >
-      <div className="p-4 flex items-center justify-between border-b border-foreground/10 h-16">
-        {isSidebarOpen && (
-          <span className="font-serif font-medium text-lg tracking-tight truncate">
-            Crispy Bacon
-          </span>
+      <div className="p-4 flex items-center justify-between border-b border-foreground/10 h-16 overflow-hidden">
+        {isSidebarOpen ? (
+          <div className="flex items-center gap-2 truncate">
+            <CrunchWrapLogo className="text-primary shrink-0" size={24} />
+            <span className="font-serif font-medium text-lg tracking-tight truncate">
+              Crunch Wrap
+            </span>
+          </div>
+        ) : (
+          <div className="flex justify-center w-full">
+            <CrunchWrapLogo className="text-primary shrink-0" size={24} />
+          </div>
         )}
-        <TactileButton
-          onClick={toggleSidebar}
-          className="p-2 rounded-full hover:bg-foreground/5 transition-colors text-foreground/70 hover:text-foreground bg-transparent"
-          aria-label="Toggle Sidebar"
-        >
-          {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
-        </TactileButton>
+        {isSidebarOpen && (
+          <TactileButton
+            onClick={toggleSidebar}
+            className="p-2 rounded-full hover:bg-foreground/5 transition-colors text-foreground/70 hover:text-foreground bg-transparent shrink-0"
+            aria-label="Toggle Sidebar"
+          >
+            <PanelLeftClose size={20} />
+          </TactileButton>
+        )}
       </div>
 
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">

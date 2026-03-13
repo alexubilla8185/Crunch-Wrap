@@ -137,8 +137,8 @@ export default function FilesPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col p-6 md:p-12 max-w-5xl mx-auto w-full">
-      <header className="mb-12">
+    <div className="flex-1 flex flex-col p-4 sm:p-6 md:p-8 max-w-5xl mx-auto w-full">
+      <header className="mb-8 sm:mb-12">
         <h1 className="text-3xl md:text-4xl font-serif font-medium tracking-tight mb-2">
           Intelligence Library
         </h1>
@@ -168,7 +168,7 @@ export default function FilesPage() {
           </Link>
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto pr-4 -mr-4">
+        <div className="flex-1 overflow-y-auto pr-0 md:pr-4 -mr-0 md:-mr-4">
           <div className="flex flex-col">
             {/* Table Header */}
             <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-3 border-b border-foreground/10 text-xs font-mono text-foreground/50 uppercase tracking-wider mb-2">
@@ -198,11 +198,11 @@ export default function FilesPage() {
                     {formatDate(insight.created_at)}
                   </div>
                   
-                  <div className="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-between md:justify-end gap-4 font-mono">
+                  <div className="col-span-1 md:col-span-3 lg:col-span-2 flex flex-row items-center justify-between md:justify-end gap-2 font-mono">
                     {getStatusIndicator(insight.processing_status)}
                     <button
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); setItemToDelete(insight.id); }}
-                      className="p-2 text-foreground/40 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center text-foreground/40 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       aria-label="Delete file"
                     >
                       <Trash className="w-4 h-4" />

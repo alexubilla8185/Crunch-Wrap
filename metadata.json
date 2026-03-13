@@ -1,6 +1,6 @@
 {
-  "name": "Crispy Bacon v2 Nextjs",
-  "description": "Transform scattered meeting notes into instant, actionable intelligence. The privacy-first AI knowledge base built for teams that refuse to lose.",
+  "name": "Crunch Wrap",
+  "description": "Your files, crunched. Your insights, wrapped. Lightning-fast AI audio transcription and file analysis.",
   "requestFramePermissions": [
     "microphone"
   ]

@@ -276,7 +276,7 @@ export default function SettingsPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-md">
               <p className="text-sm text-foreground/70 mb-4">
-                Crispy Bacon uses a Local-First architecture. Your data is processed and stored on your device before importing, ensuring maximum privacy and offline capability.
+                Crunch Wrap uses a Local-First architecture. Your data is processed and stored on your device before importing, ensuring maximum privacy and offline capability.
               </p>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-foreground/50 uppercase tracking-wider font-semibold">Local Database Size:</span>
