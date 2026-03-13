@@ -62,7 +62,7 @@ export default function HubPage() {
           onDragLeave={onDragLeave}
           onDrop={onDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`w-full py-12 px-6 md:px-12 rounded-[32px] transition-transform duration-300 hover:scale-[1.01] flex flex-col md:flex-row items-center justify-between gap-6 group relative cursor-pointer overflow-hidden ${
+          className={`w-full py-12 px-6 md:px-12 rounded-[32px] transition-transform duration-300 hover:scale-[1.01] flex flex-col md:flex-row items-center justify-between gap-6 group relative cursor-pointer overflow-hidden outline-none focus:outline-none ring-0 focus-visible:ring-0 ${
             isDragging
               ? 'bg-primary/20 scale-[1.01]'
               : 'bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10'
@@ -149,7 +149,7 @@ export default function HubPage() {
       </div>
 
       {/* The Active Matrix (Bottom Section) */}
-      <div className="flex-1 flex flex-col w-full">
+      <div className="flex-1 flex flex-col w-full outline-none focus:outline-none ring-0 focus-visible:ring-0">
         <h2 className="font-serif text-2xl mb-6">Recent Insights</h2>
         
         {insights.length === 0 ? (

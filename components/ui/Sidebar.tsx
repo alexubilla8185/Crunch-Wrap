@@ -21,7 +21,7 @@ export default function Sidebar({ email }: { email?: string }) {
 
   return (
     <aside
-      className={`hidden md:flex flex-col bg-background/50 backdrop-blur-sm transition-all duration-300 ${
+      className={`hidden md:flex flex-col bg-background/50 backdrop-blur-sm transition-all duration-300 h-screen sticky top-0 ${
         isSidebarOpen ? 'w-64' : 'w-20'
       }`}
     >

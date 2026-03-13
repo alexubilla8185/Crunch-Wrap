@@ -133,193 +133,173 @@ export default function SettingsPage() {
         </p>
       </header>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Aesthetics Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
-          <div className="flex items-center gap-3 mb-6">
+        <section className="bg-surface rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center gap-3 border-b border-black/5 dark:border-white/5 pb-4">
             <Palette className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-serif font-medium">Aesthetics</h2>
+            <h2 className="font-serif text-xl tracking-tight text-foreground">Aesthetics</h2>
           </div>
           
-          <div>
-            <h3 className="text-sm font-medium mb-3">Theme Selection</h3>
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium">Theme Selection</p>
+              <p className="text-sm text-gray-500">Select your preferred visual environment.</p>
+            </div>
             <div className="flex p-1 bg-background rounded-full border border-black/10 dark:border-white/10 w-fit">
               <button
                 onClick={() => theme !== 'sandstone' && toggleTheme()}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                   theme === 'sandstone'
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                 }`}
               >
-                Sandstone (Light)
+                Sandstone
               </button>
               <button
                 onClick={() => theme !== 'charcoal' && toggleTheme()}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                   theme === 'charcoal'
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                 }`}
               >
-                Charcoal (Dark)
+                Charcoal
               </button>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 max-w-xs">
-              Select your preferred visual environment.
-            </p>
-          </div>
-        </section>
-
-        {/* Data Ownership Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
-          <div className="flex items-center gap-3 mb-6">
-            <Download className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-serif font-medium">Data Ownership</h2>
-          </div>
-          
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="max-w-md">
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                Download a complete backup of all your notes and action items as a portable Markdown file.
-              </p>
-            </div>
-            
-            <TactileButton
-              onClick={handleExport}
-              disabled={isExporting}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-black/10 dark:border-white/10 text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              <Download className="w-4 h-4" />
-              <span className="font-sans font-medium text-sm">
-                {isExporting ? 'Exporting...' : 'Export All Intelligence (.md)'}
-              </span>
-            </TactileButton>
           </div>
         </section>
 
         {/* Intelligence Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
-          <div className="flex items-center gap-3 mb-6">
+        <section className="bg-surface rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center gap-3 border-b border-black/5 dark:border-white/5 pb-4">
             <BrainCircuit className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-serif font-medium">Intelligence</h2>
+            <h2 className="font-serif text-xl tracking-tight text-foreground">Intelligence</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <h3 className="text-sm font-medium mb-3">Model Selection</h3>
-              <div className="flex p-1 bg-background rounded-full border border-black/10 dark:border-white/10 w-fit">
-                <button
-                  onClick={() => setAIPreferences({ model: 'flash' })}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                    aiPreferences.model === 'flash'
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
-                  }`}
-                >
-                  Flash (Fast)
-                </button>
-                <button
-                  onClick={() => setAIPreferences({ model: 'pro' })}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                    aiPreferences.model === 'pro'
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
-                  }`}
-                >
-                  Pro (Deep)
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 max-w-xs">
-                Flash is optimized for speed and daily tasks. Pro uses advanced reasoning for complex analysis.
-              </p>
+              <p className="font-medium">Model Selection</p>
+              <p className="text-sm text-gray-500">Flash for speed, Pro for deep analysis.</p>
             </div>
+            <div className="flex p-1 bg-background rounded-full border border-black/10 dark:border-white/10 w-fit">
+              <button
+                onClick={() => setAIPreferences({ model: 'flash' })}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                  aiPreferences.model === 'flash'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
+                }`}
+              >
+                Flash
+              </button>
+              <button
+                onClick={() => setAIPreferences({ model: 'pro' })}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                  aiPreferences.model === 'pro'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
+                }`}
+              >
+                Pro
+              </button>
+            </div>
+          </div>
 
+          <div className="flex items-center justify-between py-2">
             <div>
-              <h3 className="text-sm font-medium mb-3">Response Tone</h3>
-              <div className="flex p-1 bg-background rounded-full border border-black/10 dark:border-white/10 w-fit">
-                <button
-                  onClick={() => setAIPreferences({ tone: 'direct' })}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                    aiPreferences.tone === 'direct'
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
-                  }`}
-                >
-                  Direct
-                </button>
-                <button
-                  onClick={() => setAIPreferences({ tone: 'detailed' })}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                    aiPreferences.tone === 'detailed'
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
-                  }`}
-                >
-                  Detailed
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 max-w-xs">
-                Direct provides concise, actionable summaries. Detailed includes expansive context and nuance.
-              </p>
+              <p className="font-medium">Response Tone</p>
+              <p className="text-sm text-gray-500">Direct or detailed summaries.</p>
             </div>
+            <div className="flex p-1 bg-background rounded-full border border-black/10 dark:border-white/10 w-fit">
+              <button
+                onClick={() => setAIPreferences({ tone: 'direct' })}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                  aiPreferences.tone === 'direct'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
+                }`}
+              >
+                Direct
+              </button>
+              <button
+                onClick={() => setAIPreferences({ tone: 'detailed' })}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                  aiPreferences.tone === 'detailed'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
+                }`}
+              >
+                Detailed
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Data Ownership Section */}
+        <section className="bg-surface rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center gap-3 border-b border-black/5 dark:border-white/5 pb-4">
+            <Download className="w-6 h-6 text-primary" />
+            <h2 className="font-serif text-xl tracking-tight text-foreground">Data Ownership</h2>
+          </div>
+          
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium">Export Intelligence</p>
+              <p className="text-sm text-gray-500">Download a backup of all notes as Markdown.</p>
+            </div>
+            <button
+              onClick={handleExport}
+              disabled={isExporting}
+              className="px-6 py-3 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors font-medium text-sm"
+            >
+              {isExporting ? 'Exporting...' : 'Export All (.md)'}
+            </button>
           </div>
         </section>
 
         {/* Local Storage Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
-          <div className="flex items-center gap-3 mb-6">
+        <section className="bg-surface rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center gap-3 border-b border-black/5 dark:border-white/5 pb-4">
             <Database className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-serif font-medium">Local Storage</h2>
+            <h2 className="font-serif text-xl tracking-tight text-foreground">Local Storage</h2>
           </div>
           
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="max-w-md">
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                Crunch Wrap uses a Local-First architecture. Your data is processed and stored on your device before importing, ensuring maximum privacy and offline capability.
-              </p>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Local Database Size:</span>
-                <span className="font-mono text-sm font-medium">24.5 MB</span>
-              </div>
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium">Clear Local Cache</p>
+              <p className="text-sm text-gray-500">Permanently destroy all local intelligence.</p>
             </div>
-            
-            <TactileButton
+            <button
               onClick={() => setShowClearModal(true)}
               disabled={isClearing}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-black/10 dark:border-white/10 text-foreground hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="px-6 py-3 rounded-full text-red-600 bg-red-500/10 hover:bg-red-500/20 transition-colors font-medium text-sm"
             >
-              <Trash2 className="w-4 h-4" />
-              <span className="font-sans font-medium text-sm">
-                {isClearing ? 'Clearing...' : 'Clear Local Cache'}
-              </span>
-            </TactileButton>
+              {isClearing ? 'Clearing...' : 'Clear Cache'}
+            </button>
           </div>
         </section>
 
         {/* Account Section */}
-        <section className="p-6 md:p-8 rounded-[32px] bg-primary/5 border border-black/10 dark:border-white/10">
-          <div className="flex items-center gap-3 mb-6">
+        <section className="bg-surface rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center gap-3 border-b border-black/5 dark:border-white/5 pb-4">
             <User className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-serif font-medium">Account</h2>
+            <h2 className="font-serif text-xl tracking-tight text-foreground">Account</h2>
           </div>
           
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center justify-between py-2">
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Signed in as</p>
-              <p className="font-mono text-sm font-medium">{userEmail || 'Loading...'}</p>
+              <p className="font-medium">Signed in as</p>
+              <p className="text-sm text-gray-500 font-mono">{userEmail || 'Loading...'}</p>
             </div>
-            
-            <TactileButton
+            <button
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-background border border-black/10 dark:border-white/10 text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="px-6 py-3 rounded-full text-red-600 bg-red-500/10 hover:bg-red-500/20 transition-colors font-medium text-sm"
             >
-              <LogOut className="w-4 h-4" />
-              <span className="font-sans font-medium text-sm">
-                {isLoggingOut ? 'Logging out...' : 'Log Out'}
-              </span>
-            </TactileButton>
+              {isLoggingOut ? 'Logging out...' : 'Log Out'}
+            </button>
           </div>
         </section>
       </div>
@@ -333,15 +313,14 @@ export default function SettingsPage() {
               <button
                 onClick={() => setShowClearModal(false)}
                 disabled={isClearing}
-                className="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                aria-label="Cancel"
+                className="px-4 py-2 rounded-full text-sm font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleClearCache}
                 disabled={isClearing}
-                className="px-4 py-2 rounded-full text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="px-4 py-2 rounded-full text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition-colors"
               >
                 {isClearing ? 'Wiping...' : 'Confirm Wipe'}
               </button>

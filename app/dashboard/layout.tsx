@@ -28,7 +28,7 @@ export default async function DashboardLayout({
   const userEmail = user?.email || 'dev@sandbox.local';
 
   return (
-    <div className="flex w-full bg-background text-foreground overflow-x-hidden">
+    <div className="flex w-full bg-background text-foreground overflow-x-hidden flex min-h-screen items-start">
       <InsightSubscriptionInitializer />
       <ImportOrchestrator />
       <PresenceInitializer email={userEmail} />
