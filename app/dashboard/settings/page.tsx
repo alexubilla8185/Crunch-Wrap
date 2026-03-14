@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useUIStore } from '@/lib/store';
-import { clearAllInsights, getAllInsights } from '@/lib/storage/localDbService';
+import { clearAllInsights, getAllInsights, saveInsight } from '@/lib/storage/localDbService';
 import { TactileButton } from '@/components/ui/TactileButton';
 import { BrainCircuit, Database, User, LogOut, Trash2, Palette, Download } from 'lucide-react';
 
@@ -15,10 +15,46 @@ export default function SettingsPage() {
   
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isClearing, setIsClearing] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
   const { showToast } = useUIStore();
+
+  const handleSync = async () => {
+    setIsSyncing(true);
+    try {
+      const { data: insights, error } = await supabase.from('insights').select('*');
+      if (error) throw error;
+      
+      for (const insight of insights || []) {
+        await saveInsight(insight);
+      }
+      showToast('Sync complete', 'success');
+    } catch (error) {
+      console.error('Sync failed:', error);
+      showToast('Sync failed', 'error');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (!window.confirm('Are you sure you want to permanently delete all files from this device and the cloud?')) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      await clearAllInsights();
+      const { error } = await supabase.from('insights').delete().eq('user_id', user.id);
+      if (error) throw error;
+      showToast('All data deleted', 'success');
+    } catch (error) {
+      console.error('Delete failed:', error);
+      showToast('Delete failed', 'error');
+    }
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -234,6 +270,41 @@ export default function SettingsPage() {
                 Detailed
               </button>
             </div>
+          </div>
+        </section>
+
+        {/* Data & Storage Section */}
+        <section className="bg-surface rounded-3xl p-6 md:p-8 mb-6 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center gap-3 border-b border-black/5 dark:border-white/5 pb-4">
+            <Database className="w-6 h-6 text-primary" />
+            <h2 className="font-serif text-xl tracking-tight text-foreground">Data & Storage</h2>
+          </div>
+          
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium">Cloud Sync</p>
+              <p className="text-sm text-gray-500">Pull your historical files securely from the cloud to this device.</p>
+            </div>
+            <button
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="px-6 py-3 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors font-medium text-sm"
+            >
+              {isSyncing ? 'Syncing...' : 'Sync Files'}
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium">Delete Account Data</p>
+              <p className="text-sm text-gray-500">Permanently delete all files from this device and the cloud.</p>
+            </div>
+            <button
+              onClick={handleDeleteAll}
+              className="px-6 py-3 rounded-full text-red-600 bg-red-500/10 hover:bg-red-500/20 transition-colors font-medium text-sm"
+            >
+              Delete All Data
+            </button>
           </div>
         </section>
 

@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { Home, Folder, Settings, Moon, Sun, PanelLeftClose, PanelLeftOpen, MessageSquare } from 'lucide-react';
 import { useUIStore } from '@/lib/store';
 
-import ActiveUsers from '@/components/ui/ActiveUsers';
 import { TactileButton } from '@/components/ui/TactileButton';
 import { CrunchWrapLogo } from '@/components/CrunchWrapLogo';
 
@@ -76,11 +75,6 @@ export default function Sidebar({ email }: { email?: string }) {
       </nav>
 
       <div className="p-4 flex flex-col gap-2">
-        {isSidebarOpen && (
-          <div className="mb-2 px-2">
-            <ActiveUsers />
-          </div>
-        )}
         <TactileButton
           onClick={toggleTheme}
           className="flex items-center gap-3 px-4 py-3 rounded-full text-gray-600 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200 w-full bg-transparent"

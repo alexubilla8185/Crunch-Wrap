@@ -9,6 +9,7 @@ import { Insight } from '@/lib/schemas';
 import { ArrowLeft, FileText, Mic, MessageSquare, Trash, ChevronDown, Sparkles, CheckCircle2 } from 'lucide-react';
 import { TactileButton } from '@/components/ui/TactileButton';
 import { ChatDrawer } from '@/components/ui/ChatDrawer';
+import ActiveUsers from '@/components/ui/ActiveUsers';
 import { useUIStore } from '@/lib/store';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
@@ -246,7 +247,10 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      <header className="mb-12">
+      <header className="mb-12 relative">
+        <div className="absolute top-0 right-0">
+          <ActiveUsers documentId={id} />
+        </div>
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full bg-primary/5 border border-black/10 dark:border-white/10 flex items-center justify-center">
             {isAudio ? <Mic className="w-5 h-5 text-primary" /> : <FileText className="w-5 h-5 text-primary" />}

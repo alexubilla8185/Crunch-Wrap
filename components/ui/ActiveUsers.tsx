@@ -1,9 +1,67 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import { useUIStore } from '@/lib/store';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
-export default function ActiveUsers() {
+export default function ActiveUsers({ documentId }: { documentId?: string }) {
   const activeUsers = useUIStore((state) => state.activeUsers);
+  const setActiveUsers = useUIStore((state) => state.setActiveUsers);
+  const channelRef = useRef<RealtimeChannel | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channelName = documentId ? `room-${documentId}` : 'global-room';
+    
+    const initPresence = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) return;
+
+      const channel = supabase.channel(channelName, {
+        config: {
+          presence: {
+            key: user.email,
+          },
+        },
+      });
+      channelRef.current = channel;
+
+      const updatePresence = () => {
+        const state = channel.presenceState();
+        const users: { id: string; email: string }[] = [];
+
+        Object.values(state).forEach((presences) => {
+          if (presences && presences.length > 0) {
+            const user = presences[0] as any;
+            if (user.email) {
+              users.push({ id: user.email, email: user.email });
+            }
+          }
+        });
+
+        const uniqueUsers = Array.from(new Map(users.map((user) => [user.email, user])).values());
+        setActiveUsers(uniqueUsers);
+      };
+
+      channel
+        .on('presence', { event: 'sync' }, updatePresence)
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            await channel.track({ email: user.email, online_at: new Date().toISOString() });
+          }
+        });
+    };
+    
+    initPresence();
+    
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
+  }, [documentId, setActiveUsers]);
 
   if (activeUsers.length === 0) return null;
 
