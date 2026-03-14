@@ -30,29 +30,62 @@ export function GoogleDrivePicker() {
   const router = useRouter();
 
   useEffect(() => {
-    const loadScripts = () => {
-      const gapiScript = document.createElement('script');
-      gapiScript.src = 'https://apis.google.com/js/api.js';
-      gapiScript.onload = () => {
-        window.gapi.load('picker', () => {
-          setIsPickerLoaded(true);
-        });
-      };
-      document.body.appendChild(gapiScript);
+    if (!CLIENT_ID || !API_KEY) {
+      console.warn('Google Drive Picker requires NEXT_PUBLIC_GOOGLE_CLIENT_ID and NEXT_PUBLIC_GOOGLE_API_KEY');
+      return;
+    }
 
-      const gsiScript = document.createElement('script');
-      gsiScript.src = 'https://accounts.google.com/gsi/client';
-      gsiScript.onload = () => {
-        tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
-          client_id: CLIENT_ID!,
-          scope: SCOPES,
-          callback: '', // Callback handled in the picker flow
+    let isMounted = true;
+
+    const loadScripts = () => {
+      if (!document.querySelector('script[src="https://apis.google.com/js/api.js"]')) {
+        const gapiScript = document.createElement('script');
+        gapiScript.src = 'https://apis.google.com/js/api.js';
+        gapiScript.async = true;
+        gapiScript.defer = true;
+        gapiScript.onload = () => {
+          if (isMounted && window.gapi) {
+            window.gapi.load('picker', () => {
+              if (isMounted) setIsPickerLoaded(true);
+            });
+          }
+        };
+        document.body.appendChild(gapiScript);
+      } else if (window.gapi) {
+        window.gapi.load('picker', () => {
+          if (isMounted) setIsPickerLoaded(true);
         });
-      };
-      document.body.appendChild(gsiScript);
+      }
+
+      if (!document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
+        const gsiScript = document.createElement('script');
+        gsiScript.src = 'https://accounts.google.com/gsi/client';
+        gsiScript.async = true;
+        gsiScript.defer = true;
+        gsiScript.onload = () => {
+          if (isMounted && window.google?.accounts?.oauth2) {
+            tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
+              client_id: CLIENT_ID,
+              scope: SCOPES,
+              callback: () => {}, // Callback handled in the picker flow
+            });
+          }
+        };
+        document.body.appendChild(gsiScript);
+      } else if (window.google?.accounts?.oauth2) {
+        tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
+          client_id: CLIENT_ID,
+          scope: SCOPES,
+          callback: () => {}, // Callback handled in the picker flow
+        });
+      }
     };
 
     loadScripts();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const pickerCallback = useCallback((accessToken: string) => async (data: any) => {
@@ -163,23 +196,7 @@ export function GoogleDrivePicker() {
     }
   }, [queryClient, router, showToast, supabase]);
 
-  const createPicker = useCallback((accessToken: string) => {
-    const picker = new window.google.picker.PickerBuilder()
-      .setOAuthToken(accessToken)
-      .setDeveloperKey(API_KEY!)
-      .setAppId(CLIENT_ID!)
-      .setCallback(pickerCallback(accessToken))
-      .addView(
-        new window.google.picker.DocsView(window.google.picker.ViewId.DOCS)
-          .setMimeTypes('application/vnd.google-apps.document,text/plain,text/markdown,audio/mpeg,audio/wav,audio/x-m4a')
-      )
-      .setSelectable(true)
-      .setMultiSelectEnabled(false)
-      .build();
-    picker.setVisible(true);
-  }, [pickerCallback]);
-
-  const handleImport = useCallback(() => {
+  const handleDriveClick = useCallback(() => {
     if (!isPickerLoaded || !tokenClientRef.current) return;
 
     tokenClientRef.current.callback = async (resp: any) => {
@@ -187,15 +204,25 @@ export function GoogleDrivePicker() {
         throw resp;
       }
       const accessToken = resp.access_token;
-      createPicker(accessToken);
+      
+      const view = new window.google.picker.DocsView(window.google.picker.ViewId.DOCS);
+      view.setMimeTypes('application/vnd.google-apps.document,text/plain,text/markdown,audio/mpeg,audio/wav,audio/m4a');
+
+      const picker = new window.google.picker.PickerBuilder()
+        .addView(view)
+        .setOAuthToken(accessToken)
+        .setDeveloperKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY)
+        .setCallback(pickerCallback(accessToken))
+        .build();
+      picker.setVisible(true);
     };
 
     tokenClientRef.current.requestAccessToken({ prompt: '' });
-  }, [isPickerLoaded, createPicker]);
+  }, [isPickerLoaded, pickerCallback]);
 
   return (
     <button
-      onClick={handleImport}
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDriveClick(); }}
       className="px-4 py-2 rounded-full border border-border hover:bg-foreground/5 transition-colors font-medium text-sm text-foreground"
     >
       Import from Drive
