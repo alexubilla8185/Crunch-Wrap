@@ -3,41 +3,60 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
-  // if "next" is in param, use it as the redirect URL
-  const next = searchParams.get('next') ?? '/dashboard/hub';
+  try {
+    const requestUrl = new URL(request.url);
+    const code = requestUrl.searchParams.get('code');
+    const next = requestUrl.searchParams.get('next') ?? '/dashboard/hub';
 
-  if (code) {
-    const cookieStore = await cookies(); // MUST AWAIT IN NEXT 15
+    if (!code) {
+      return NextResponse.redirect(`${requestUrl.origin}/auth?error=NoCodeProvided`);
+    }
+
+    const cookieStore = await cookies();
+
+    // CRITICAL: Use the Netlify-specific DATABASE_URL fallback
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_DATABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase Environment Variables');
+    }
+
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl,
+      supabaseKey,
       {
         cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
+          getAll() { return cookieStore.getAll(); },
           setAll(cookiesToSet) {
             try {
               cookiesToSet.forEach(({ name, value, options }) => {
                 cookieStore.set(name, value, options);
               });
-            } catch (error) {
-              // The `setAll` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing user sessions.
-            }
+            } catch (error) {}
           },
         },
       }
     );
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
-    }
-  }
+    
+    if (error) throw error;
 
-  // return the user to an error page with some instructions
-  return NextResponse.redirect(`${origin}/auth?error=CouldNotAuthenticate`);
+    // NETLIFY FIX: Use x-forwarded-host to prevent 500 proxy loop
+    const forwardedHost = request.headers.get('x-forwarded-host');
+    const isLocalEnv = process.env.NODE_ENV === 'development';
+    
+    if (isLocalEnv) {
+      return NextResponse.redirect(`${requestUrl.origin}${next}`);
+    } else if (forwardedHost) {
+      return NextResponse.redirect(`https://${forwardedHost}${next}`);
+    } else {
+      return NextResponse.redirect(`${requestUrl.origin}${next}`);
+    }
+
+  } catch (err) {
+    console.error('Callback Error:', err);
+    return NextResponse.redirect(new URL('/auth?error=InternalServerError', request.url));
+  }
 }

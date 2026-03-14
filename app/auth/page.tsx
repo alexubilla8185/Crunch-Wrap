@@ -8,7 +8,7 @@ export default function AuthPage() {
   const router = useRouter();
 
   const handleBypass = () => {
-    document.cookie = "crunch_dev_bypass=true; path=/; max-age=86400; SameSite=Lax";
+    document.cookie = "crunch_dev_bypass=true; path=/; max-age=86400; SameSite=None; Secure";
     router.refresh();
     router.push('/dashboard/hub');
   };

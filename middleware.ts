@@ -2,16 +2,19 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  if (request.cookies.has('crunch_dev_bypass')) {
-    return NextResponse.next();
+  // 1. HARD BYPASS FOR DEVELOPMENT
+  const hasBypass = request.cookies.has('crunch_dev_bypass');
+  if (hasBypass && request.nextUrl.pathname.startsWith('/dashboard')) {
+    return NextResponse.next(); // Let them right in
   }
 
   let supabaseResponse = NextResponse.next({
     request,
   });
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_DATABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_DATABASE_URL || 'https://placeholder.supabase.co',
+    supabaseUrl,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
     {
       cookies: {
