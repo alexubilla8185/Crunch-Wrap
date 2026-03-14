@@ -14,9 +14,9 @@
 
 @layer base {
   :root {
-    --background: #F8F9FA;
+    --background: #F4F5F7;
     --surface: #FFFFFF;
-    --foreground: #1E1E1E;
+    --foreground: #1C1C1E;
     --primary: #0B57D0;
     --primary-foreground: #FFFFFF;
     --border: rgba(0, 0, 0, 0.05);

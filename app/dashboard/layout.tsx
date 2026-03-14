@@ -28,13 +28,13 @@ export default async function DashboardLayout({
   const userEmail = user?.email || 'dev@sandbox.local';
 
   return (
-    <div className="flex w-full bg-background text-foreground overflow-x-hidden flex min-h-screen items-start">
+    <div className="flex h-screen overflow-hidden bg-background">
       <InsightSubscriptionInitializer />
       <ImportOrchestrator />
       <PresenceInitializer email={userEmail} />
       <Sidebar email={userEmail} />
       
-      <main className="flex-1 flex flex-col pb-20 md:pb-0 relative md:p-4">
+      <main className="flex-1 overflow-y-auto relative flex flex-col">
         <div className="flex-1 bg-surface md:rounded-[32px] md:shadow-m3 flex flex-col">
           {children}
         </div>

@@ -11,7 +11,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'documentContext is required' }, { status: 400 });
     }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY! });
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: 'AI API Key is missing from environment variables.' }, { status: 401 });
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
 
     const systemInstruction = "You are a highly intelligent document assistant. Use the following context to answer the user's questions accurately. If the answer is not in the context, say so. CONTEXT: \n\n" + documentContext;
 
@@ -29,7 +34,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ text: response.text });
   } catch (error) {
-    console.error("Chat API error:", error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Chat API Error:", error);
+    return NextResponse.json(
+      { error: "Failed to process chat request.", details: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    );
   }
 }

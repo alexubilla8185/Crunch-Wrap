@@ -155,7 +155,7 @@ export default function SettingsPage() {
                     : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                 }`}
               >
-                Sandstone
+                Light Mode
               </button>
               <button
                 onClick={() => theme !== 'charcoal' && toggleTheme()}
@@ -165,7 +165,7 @@ export default function SettingsPage() {
                     : 'text-gray-500 dark:text-gray-400 hover:text-foreground'
                 }`}
               >
-                Charcoal
+                Dark Mode
               </button>
             </div>
           </div>

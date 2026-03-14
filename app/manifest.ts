@@ -11,13 +11,8 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#0E0E0E',
     icons: [
       {
-        src: '/icon', // This automatically pulls from our dynamic app/icon.tsx
-        sizes: '192x192',
-        type: 'image/png',
-      },
-      {
         src: '/icon',
-        sizes: '512x512',
+        sizes: 'any',
         type: 'image/png',
       },
     ],
