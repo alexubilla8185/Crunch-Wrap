@@ -29,65 +29,6 @@ export function GoogleDrivePicker() {
   const supabase = createClient();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!CLIENT_ID || !API_KEY) {
-      console.warn('Google Drive Picker requires NEXT_PUBLIC_GOOGLE_CLIENT_ID and NEXT_PUBLIC_GOOGLE_API_KEY');
-      return;
-    }
-
-    let isMounted = true;
-
-    const loadScripts = () => {
-      if (!document.querySelector('script[src="https://apis.google.com/js/api.js"]')) {
-        const gapiScript = document.createElement('script');
-        gapiScript.src = 'https://apis.google.com/js/api.js';
-        gapiScript.async = true;
-        gapiScript.defer = true;
-        gapiScript.onload = () => {
-          if (isMounted && window.gapi) {
-            window.gapi.load('picker', () => {
-              if (isMounted) setIsPickerLoaded(true);
-            });
-          }
-        };
-        document.body.appendChild(gapiScript);
-      } else if (window.gapi) {
-        window.gapi.load('picker', () => {
-          if (isMounted) setIsPickerLoaded(true);
-        });
-      }
-
-      if (!document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
-        const gsiScript = document.createElement('script');
-        gsiScript.src = 'https://accounts.google.com/gsi/client';
-        gsiScript.async = true;
-        gsiScript.defer = true;
-        gsiScript.onload = () => {
-          if (isMounted && window.google?.accounts?.oauth2) {
-            tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
-              client_id: CLIENT_ID,
-              scope: SCOPES,
-              callback: () => {}, // Callback handled in the picker flow
-            });
-          }
-        };
-        document.body.appendChild(gsiScript);
-      } else if (window.google?.accounts?.oauth2) {
-        tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
-          client_id: CLIENT_ID,
-          scope: SCOPES,
-          callback: () => {}, // Callback handled in the picker flow
-        });
-      }
-    };
-
-    loadScripts();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
   const pickerCallback = useCallback((accessToken: string) => async (data: any) => {
     if (data.action === window.google.picker.Action.PICKED) {
       const file = data.docs[0];
@@ -196,29 +137,96 @@ export function GoogleDrivePicker() {
     }
   }, [queryClient, router, showToast, supabase]);
 
-  const handleDriveClick = useCallback(() => {
-    if (!isPickerLoaded || !tokenClientRef.current) return;
+  const createPicker = useCallback((accessToken: string) => {
+    const view = new window.google.picker.DocsView(window.google.picker.ViewId.DOCS);
+    view.setMimeTypes('application/vnd.google-apps.document,text/plain,text/markdown,audio/mpeg,audio/wav,audio/m4a');
 
-    tokenClientRef.current.callback = async (resp: any) => {
-      if (resp.error !== undefined) {
-        throw resp;
+    const picker = new window.google.picker.PickerBuilder()
+      .addView(view)
+      .setOAuthToken(accessToken)
+      .setDeveloperKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY!)
+      .setCallback(pickerCallback(accessToken))
+      .build();
+    picker.setVisible(true);
+  }, [pickerCallback]);
+
+  useEffect(() => {
+    if (!CLIENT_ID || !API_KEY) {
+      console.warn('Google Drive Picker requires NEXT_PUBLIC_GOOGLE_CLIENT_ID and NEXT_PUBLIC_GOOGLE_API_KEY');
+      return;
+    }
+
+    let isMounted = true;
+
+    const loadScripts = () => {
+      if (!document.querySelector('script[src="https://apis.google.com/js/api.js"]')) {
+        const gapiScript = document.createElement('script');
+        gapiScript.src = 'https://apis.google.com/js/api.js';
+        gapiScript.async = true;
+        gapiScript.defer = true;
+        gapiScript.onload = () => {
+          if (isMounted && window.gapi) {
+            window.gapi.load('picker', () => {
+              if (isMounted) setIsPickerLoaded(true);
+            });
+          }
+        };
+        document.body.appendChild(gapiScript);
+      } else if (window.gapi) {
+        window.gapi.load('picker', () => {
+          if (isMounted) setIsPickerLoaded(true);
+        });
       }
-      const accessToken = resp.access_token;
-      
-      const view = new window.google.picker.DocsView(window.google.picker.ViewId.DOCS);
-      view.setMimeTypes('application/vnd.google-apps.document,text/plain,text/markdown,audio/mpeg,audio/wav,audio/m4a');
 
-      const picker = new window.google.picker.PickerBuilder()
-        .addView(view)
-        .setOAuthToken(accessToken)
-        .setDeveloperKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY)
-        .setCallback(pickerCallback(accessToken))
-        .build();
-      picker.setVisible(true);
+      if (!document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
+        const gsiScript = document.createElement('script');
+        gsiScript.src = 'https://accounts.google.com/gsi/client';
+        gsiScript.async = true;
+        gsiScript.defer = true;
+        gsiScript.onload = () => {
+          if (isMounted && window.google?.accounts?.oauth2) {
+            tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
+              client_id: CLIENT_ID,
+              scope: 'https://www.googleapis.com/auth/drive.readonly',
+              callback: (tokenResponse: any) => {
+                if (tokenResponse && tokenResponse.access_token) {
+                  createPicker(tokenResponse.access_token);
+                }
+              },
+            });
+          }
+        };
+        document.body.appendChild(gsiScript);
+      } else if (window.google?.accounts?.oauth2) {
+        tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
+          client_id: CLIENT_ID,
+          scope: 'https://www.googleapis.com/auth/drive.readonly',
+          callback: (tokenResponse: any) => {
+            if (tokenResponse && tokenResponse.access_token) {
+              createPicker(tokenResponse.access_token);
+            }
+          },
+        });
+      }
     };
 
+    loadScripts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleDriveClick = useCallback(() => {
+    if (!process.env.NEXT_PUBLIC_GOOGLE_API_KEY || !process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
+      console.error("Google API Keys are missing. Ensure NEXT_PUBLIC_ variables are set.");
+      alert("Configuration Error: Missing Google API Keys.");
+      return;
+    }
+    if (!isPickerLoaded || !tokenClientRef.current) return;
+
     tokenClientRef.current.requestAccessToken({ prompt: '' });
-  }, [isPickerLoaded, pickerCallback]);
+  }, [isPickerLoaded]);
 
   return (
     <button
