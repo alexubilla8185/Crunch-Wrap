@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { UploadCloud, Mic, Square, FileText, Activity, Zap, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useFileDrop } from '@/hooks/useFileDrop';
@@ -10,35 +10,77 @@ import { GoogleDrivePicker } from '@/components/ui/GoogleDrivePicker';
 import { TactileButton } from '@/components/ui/TactileButton';
 import { getAllInsights } from '@/lib/storage/localDbService';
 import { Insight } from '@/lib/schemas';
+import { useQuery } from '@tanstack/react-query';
+import { createClient } from '@/lib/supabase/client';
+import { shouldUpdateStatus } from '@/lib/utils';
 
 export default function HubPage() {
   const { isDragging, onDragEnter, onDragOver, onDragLeave, onDrop, handleFileInput } = useFileDrop();
   const { isRecording, recordingTime, startMicRecording, startScreenAudioRecording, stopRecording } = useAudioRecorder();
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const supabase = createClient();
 
-  const [insights, setInsights] = useState<Insight[]>([]);
-
-  useEffect(() => {
-    const fetchInsights = async () => {
-      try {
-        const data = await getAllInsights();
-        setInsights(data);
-      } catch (error) {
-        console.error('Failed to fetch insights:', error);
-      }
-    };
-    fetchInsights();
-  }, []);
-
-  const allActionItems = insights.flatMap(insight => {
-    const items = insight.intelligence?.action_items || [];
-    return items.map(task => ({
-      task,
-      insightId: insight.id,
-      insightTitle: insight.title || 'Untitled Document'
-    }));
+  const { data: localInsights = [] } = useQuery({
+    queryKey: ['localInsights'],
+    queryFn: async () => {
+      const data = await getAllInsights();
+      return data;
+    }
   });
+
+  const { data: supabaseInsights = [] } = useQuery({
+    queryKey: ['insights'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('insights').select('*');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const insights = useMemo(() => {
+    const mergedMap = new Map<string, Insight>();
+
+    supabaseInsights.forEach(remote => {
+      mergedMap.set(remote.id, remote as Insight);
+    });
+
+    localInsights.forEach(local => {
+      if (mergedMap.has(local.id)) {
+        const remote = mergedMap.get(local.id)!;
+        const finalStatus = shouldUpdateStatus(local.processing_status, remote.processing_status)
+          ? remote.processing_status
+          : local.processing_status;
+        
+        mergedMap.set(local.id, {
+          ...local,
+          ...remote,
+          title: remote.title || local.title,
+          processing_status: finalStatus || local.processing_status,
+        } as Insight);
+      } else {
+        mergedMap.set(local.id, local as Insight);
+      }
+    });
+
+    return Array.from(mergedMap.values()).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }, [localInsights, supabaseInsights]);
+
+  const metrics = useMemo(() => {
+    let actionPipeline = 0;
+    let intelligenceDensity = 0;
+
+    insights.forEach(insight => {
+      actionPipeline += insight.intelligence?.action_items?.length || 0;
+      intelligenceDensity += (insight.intelligence?.highlights?.length || 0) + (insight.intelligence?.topics?.length || 0);
+    });
+
+    return {
+      knowledgeVault: insights.length,
+      actionPipeline,
+      intelligenceDensity
+    };
+  }, [insights]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -138,26 +180,26 @@ export default function HubPage() {
 
       {/* M3 Metric Cards (Middle Section) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-        <div className="bg-surface rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
+        <div className="bg-primary/10 text-primary rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group border border-primary/20">
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <FileText className="w-16 h-16" />
           </div>
-          <p className="text-sm font-medium text-foreground/70 mb-2 relative z-10">Files Crunched</p>
-          <p className="text-4xl font-serif text-foreground relative z-10">{insights.length}</p>
+          <p className="text-sm font-medium mb-2 relative z-10 opacity-80">Knowledge Vault</p>
+          <p className="text-4xl font-serif relative z-10">{metrics.knowledgeVault}</p>
         </div>
-        <div className="bg-surface rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
+        <div className="bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group border border-blue-500/20">
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <Activity className="w-16 h-16" />
           </div>
-          <p className="text-sm font-medium text-foreground/70 mb-2 relative z-10">Action Items</p>
-          <p className="text-4xl font-serif text-foreground relative z-10">{allActionItems.length}</p>
+          <p className="text-sm font-medium mb-2 relative z-10 opacity-80">Action Pipeline</p>
+          <p className="text-4xl font-serif relative z-10">{metrics.actionPipeline}</p>
         </div>
-        <div className="bg-surface rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group">
+        <div className="bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-[24px] p-6 shadow-sm flex flex-col justify-center relative overflow-hidden group border border-purple-500/20">
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <Zap className="w-16 h-16" />
           </div>
-          <p className="text-sm font-medium text-foreground/70 mb-2 relative z-10">Fast Insights</p>
-          <p className="text-4xl font-serif text-foreground relative z-10">{insights.filter(i => i.processing_status === 'completed').length}</p>
+          <p className="text-sm font-medium mb-2 relative z-10 opacity-80">Intelligence Density</p>
+          <p className="text-4xl font-serif relative z-10">{metrics.intelligenceDensity}</p>
         </div>
       </div>
 

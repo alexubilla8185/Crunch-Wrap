@@ -77,7 +77,7 @@ export default function FilesPage() {
   }, [localInsights, supabaseInsights]);
 
   useEffect(() => {
-    if (isLocalLoading || isSupabaseLoading) return;
+    if (isLocalLoading || isSupabaseLoading || supabaseInsights.length === 0) return;
 
     const purgeZombies = async () => {
       const supabaseIds = new Set(supabaseInsights.map(i => i.id));
