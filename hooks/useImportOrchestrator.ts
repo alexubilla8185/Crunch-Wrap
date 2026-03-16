@@ -118,13 +118,13 @@ export function useImportOrchestrator() {
             // 2. Insert into Supabase DB
             const { data: dbInsight, error: dbError } = await supabase
               .from('insights')
-              .insert({
+              .upsert({
                 id: insight.id, // Use the original ID
                 user_id: user.id,
                 processing_status: 'analyzing',
                 audio_url: isDocument ? null : filePath,
                 summary: 'Analyzing...',
-              })
+              }, { onConflict: 'id' })
               .select()
               .single();
 
@@ -141,7 +141,7 @@ export function useImportOrchestrator() {
             }
 
             // 3. Navigate immediately
-            router.push(`/dashboard/files/${dbInsight.id}`);
+            // router.push(`/dashboard/files/${dbInsight.id}`);
 
             // 4. Call API (Non-blocking)
             const apiBody: any = { 

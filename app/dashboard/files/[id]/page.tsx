@@ -61,6 +61,26 @@ export default function InsightDetailPage({ params }: { params: Promise<{ id: st
     enabled: !!id && localInsight?.processing_status !== 'local' && localInsight?.processing_status !== 'uploading',
   });
 
+  useEffect(() => {
+    if (!id) return;
+    const channel = supabase
+      .channel(`insight:${id}`)
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'insights',
+        filter: `id=eq.${id}`,
+      }, (payload) => {
+        console.log('Realtime update received:', payload);
+        queryClient.setQueryData(['supabaseInsight', id], payload.new);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [id, supabase, queryClient]);
+
   const isSharedMode = !!token || (supabaseInsight && (!currentUser || currentUser.id !== supabaseInsight.user_id));
 
   const finalStatus = shouldUpdateStatus(localInsight?.processing_status, supabaseInsight?.processing_status)

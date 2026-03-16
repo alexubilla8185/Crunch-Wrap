@@ -141,13 +141,13 @@ export function useFileDrop() {
             // Insert into Supabase DB
             const { data: dbInsight, error: dbError } = await supabase
               .from('insights')
-              .insert({
+              .upsert({
                 id: id,
                 user_id: user.id,
                 processing_status: 'analyzing',
                 audio_url: isDocument ? null : filePath,
                 summary: 'Analyzing...',
-              })
+              }, { onConflict: 'id' })
               .select()
               .single();
 

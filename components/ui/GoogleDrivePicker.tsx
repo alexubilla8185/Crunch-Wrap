@@ -99,13 +99,13 @@ export function GoogleDrivePicker() {
 
           const { data: dbInsight } = await supabase
             .from('insights')
-            .insert({
+            .upsert({
               id,
               user_id: user.id,
               processing_status: 'analyzing',
               audio_url: typeof content === 'string' ? null : filePath,
               summary: 'Analyzing...',
-            })
+            }, { onConflict: 'id' })
             .select()
             .single();
 
@@ -127,6 +127,7 @@ export function GoogleDrivePicker() {
             body: JSON.stringify(apiBody),
           });
           
+          queryClient.invalidateQueries({ queryKey: ['insights'] });
           showToast('Import complete', 'success');
         })();
 
@@ -215,7 +216,7 @@ export function GoogleDrivePicker() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [createPicker]);
 
   const handleDriveClick = useCallback(() => {
     if (!process.env.NEXT_PUBLIC_GOOGLE_API_KEY || !process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {

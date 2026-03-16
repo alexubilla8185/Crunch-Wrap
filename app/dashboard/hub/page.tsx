@@ -99,7 +99,9 @@ export default function HubPage() {
           </div>
 
           <div className="flex items-center gap-4 justify-center z-10 shrink-0">
-            <GoogleDrivePicker />
+            <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+              <GoogleDrivePicker />
+            </div>
             {isRecording ? (
               <TactileButton
                 onClick={(e) => {

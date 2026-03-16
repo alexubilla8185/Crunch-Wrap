@@ -180,13 +180,13 @@ export function useAudioRecorder() {
               // Insert into Supabase DB
               const { data: dbInsight, error: dbError } = await supabase
                 .from('insights')
-                .insert({
+                .upsert({
                   id: id,
                   user_id: user.id,
                   processing_status: 'analyzing',
                   audio_url: filePath,
                   summary: 'Analyzing...',
-                })
+                }, { onConflict: 'id' })
                 .select()
                 .single();
 
