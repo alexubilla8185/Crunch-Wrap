@@ -1,20 +1,56 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Crunch Wrap
 
-# Run and deploy your AI Studio app
+Crunch Wrap is a lightning-fast AI-powered tool designed to help you transcribe audio meetings and analyze files instantly. Get the insights you need, wrapped up and ready to go.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/18b79d6c-27b7-4de5-b322-dba6fdf1e195
+- 🎙️ **Real-time Audio Transcription**: Record meetings and voice notes with ease.
+- 📄 **File Analysis**: Upload documents and get intelligent summaries.
+- 🚀 **Lightning Fast**: Optimized for speed and productivity.
+- 🔒 **Secure**: Your data is handled with privacy in mind.
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- **Framework**: Next.js 15+ (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **AI Integration**: Google Gemini API
+- **Database/Auth**: Supabase
+- **State Management**: React Query
 
+## Getting Started
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### Prerequisites
+
+- Node.js 18+
+- A Supabase project
+- A Google Gemini API key
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/alexubilla8185/YOUR_NEW_REPO_NAME.git
+   cd YOUR_NEW_REPO_NAME
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Configure environment variables:
+   Create a `.env.local` file based on `.env.example` and fill in your Supabase and Google Cloud credentials.
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Deployment
+
+This project is configured for deployment on platforms like Vercel or Netlify. Ensure you have your environment variables set up in your deployment dashboard.
+
+## License
+
+This project is licensed under the MIT License.
